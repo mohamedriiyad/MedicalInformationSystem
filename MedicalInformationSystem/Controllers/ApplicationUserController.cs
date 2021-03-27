@@ -24,6 +24,7 @@ namespace MedicalInformationSystem.Controllers
         }
 
 
+
         [HttpPost]
         [Route("api/ApplicationUser/postUser")]
 
@@ -63,7 +64,8 @@ namespace MedicalInformationSystem.Controllers
                 }
 
 
-                
+                model.Role = "Admin";
+
                 var User = new ApplicationUser()
                 {
 
@@ -78,18 +80,12 @@ namespace MedicalInformationSystem.Controllers
                     RelativeTwoName = model.RelativeTwoName,
                     RelativeTwoPhoneNumber = model.RelativeTwoPhoneNumber,
                     City = model.City
-                   
                 };
                 var result = await this.usermanager.CreateAsync(User, model.Password);
 
                 if (result.Succeeded)
                 {
-                    model.Role = "Admin";
-                    
                     var addRole = await this.usermanager.AddToRoleAsync(User, model.Role);
-
-                    //await usermanager.AddToRoleAsync(User, "Admin");
-                       
                     return Ok(result);
                 }
                 else
@@ -104,6 +100,13 @@ namespace MedicalInformationSystem.Controllers
             return StatusCode(201);
 
         }
+
+
+
+
+
+
+
 
 
 

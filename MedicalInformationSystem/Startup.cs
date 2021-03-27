@@ -34,8 +34,10 @@ namespace MedicalInformationSystem
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
-            
+            services.AddControllers().AddNewtonsoftJson(options =>
+             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+              );
+
 
 
             services.AddDbContext<MedicalSystemDbContext>(
@@ -44,6 +46,8 @@ namespace MedicalInformationSystem
             services.AddIdentityCore<ApplicationUser>()
                .AddRoles<IdentityRole>()
          .AddEntityFrameworkStores<MedicalSystemDbContext>();
+         
+            
 
             services.Configure<IdentityOptions>(options =>
             {
@@ -76,13 +80,14 @@ namespace MedicalInformationSystem
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = "http://localhost:4200",
-                        ValidAudience = "http://localhost:4200",
+                        ValidIssuer = "https://localhost:44309/" ,
+                     
+                        ValidAudience = "https://localhost:44309/",
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"))
                     };
                 });
 
-
+           
 
 
 
