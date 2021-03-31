@@ -4,14 +4,16 @@ using MedicalInformationSystem.Persistant;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MedicalInformationSystem.Migrations
 {
     [DbContext(typeof(MedicalSystemDbContext))]
-    partial class MedicalSystemDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210329005244_AddBloodTable")]
+    partial class AddBloodTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -19,92 +21,19 @@ namespace MedicalInformationSystem.Migrations
                 .HasAnnotation("ProductVersion", "5.0.4")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("MedicalInformationSystem.Models.Disease", b =>
+            modelBuilder.Entity("MedicalInformationSystem.Models.Blood", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("MedicalHistoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MedicalHistoryId");
-
-                    b.ToTable("Diseases");
-                });
-
-            modelBuilder.Entity("MedicalInformationSystem.Models.MedicalHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("BloodType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId")
-                        .IsUnique()
-                        .HasFilter("[ApplicationUserId] IS NOT NULL");
-
-                    b.ToTable("MedicalHistory");
-                });
-
-            modelBuilder.Entity("MedicalInformationSystem.Models.Operation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("MedicalHistoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MedicalHistoryId");
-
-                    b.ToTable("Operations");
-                });
-
-            modelBuilder.Entity("MedicalInformationSystem.Models.Sensitivity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("MedicalHistoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MedicalHistoryId");
-
-                    b.ToTable("Sensitivities");
+                    b.ToTable("Blood");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -313,6 +242,9 @@ namespace MedicalInformationSystem.Migrations
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
+                    b.Property<int>("BloodId")
+                        .HasColumnType("int");
+
                     b.Property<string>("City")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -349,49 +281,11 @@ namespace MedicalInformationSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.HasIndex("BloodId")
+                        .IsUnique()
+                        .HasFilter("[BloodId] IS NOT NULL");
+
                     b.HasDiscriminator().HasValue("ApplicationUser");
-                });
-
-            modelBuilder.Entity("MedicalInformationSystem.Models.Disease", b =>
-                {
-                    b.HasOne("MedicalInformationSystem.Models.MedicalHistory", "MedicalHistory")
-                        .WithMany("Diseases")
-                        .HasForeignKey("MedicalHistoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MedicalHistory");
-                });
-
-            modelBuilder.Entity("MedicalInformationSystem.Models.MedicalHistory", b =>
-                {
-                    b.HasOne("MedicalInformationSystem.Models.ApplicationUser", "ApplicationUser")
-                        .WithOne("MedicalHistory")
-                        .HasForeignKey("MedicalInformationSystem.Models.MedicalHistory", "ApplicationUserId");
-
-                    b.Navigation("ApplicationUser");
-                });
-
-            modelBuilder.Entity("MedicalInformationSystem.Models.Operation", b =>
-                {
-                    b.HasOne("MedicalInformationSystem.Models.MedicalHistory", "MedicalHistory")
-                        .WithMany("Operations")
-                        .HasForeignKey("MedicalHistoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MedicalHistory");
-                });
-
-            modelBuilder.Entity("MedicalInformationSystem.Models.Sensitivity", b =>
-                {
-                    b.HasOne("MedicalInformationSystem.Models.MedicalHistory", "MedicalHistory")
-                        .WithMany("Sensitivities")
-                        .HasForeignKey("MedicalHistoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MedicalHistory");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -445,18 +339,20 @@ namespace MedicalInformationSystem.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MedicalInformationSystem.Models.MedicalHistory", b =>
-                {
-                    b.Navigation("Diseases");
-
-                    b.Navigation("Operations");
-
-                    b.Navigation("Sensitivities");
-                });
-
             modelBuilder.Entity("MedicalInformationSystem.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("MedicalHistory");
+                    b.HasOne("MedicalInformationSystem.Models.Blood", "Blood")
+                        .WithOne("ApplicationUser")
+                        .HasForeignKey("MedicalInformationSystem.Models.ApplicationUser", "BloodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Blood");
+                });
+
+            modelBuilder.Entity("MedicalInformationSystem.Models.Blood", b =>
+                {
+                    b.Navigation("ApplicationUser");
                 });
 #pragma warning restore 612, 618
         }

@@ -40,6 +40,9 @@ namespace MedicalInformationSystem.Models
         [Required]
         public string RelativeTwoPhoneNumber { get; set; }
 
+        public virtual MedicalHistory MedicalHistory { get; set; }
+        
+
 
 
         public ApplicationUser()

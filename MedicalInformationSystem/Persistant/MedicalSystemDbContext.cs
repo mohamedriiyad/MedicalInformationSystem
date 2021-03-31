@@ -18,6 +18,10 @@ namespace MedicalInformationSystem.Persistant
         }
 
         public DbSet<ApplicationUser> Patients { get; set; }
+        public DbSet<MedicalHistory> MedicalHistory { get; set; }
+        public DbSet<Operation> Operations  { get; set; }
+        public DbSet<Disease> Diseases { get; set; }
+        public DbSet<Sensitivity> Sensitivities { get; set; }
 
 
     }
