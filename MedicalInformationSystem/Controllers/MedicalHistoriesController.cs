@@ -169,11 +169,6 @@ namespace MedicalInformationSystem.Controllers
         [HttpPost]
         public async Task<ActionResult<MedicalHistory>> PostMedicalHistory(MedicalHistoryViewModel _medicalHistory)
         {
-            if (!MedicalHistoryUserExists(_medicalHistory.ApplicationUserId))
-            {
-                return NotFound("This user doesn't have any medical history yet.");
-            }
-
             var medicalHistory = new MedicalHistory
             {
                 BloodType = _medicalHistory.BloodType,
