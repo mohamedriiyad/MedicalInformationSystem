@@ -23,32 +23,47 @@ namespace MedicalInformationSystem.Controllers
 
         // GET: api/MedicalHistories
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MedicalHistory>>> GetMedicalHistory()
+        public async Task<IEnumerable<MedicalHistoryViewModel>> GetMedicalHistory()
         {
-
-            return await _context.MedicalHistory
+            var medicalHistories = await _context.MedicalHistory
                 .Include(m => m.ApplicationUser)
                 .Include(m => m.Operations)
                 .Include(m => m.Diseases)
-                .Include(m => m.Sensitivities).ToListAsync();
+                .Include(m => m.Sensitivities)
+                .Select(a => new MedicalHistoryViewModel
+                {
+
+                    Id = a.Id,
+                    ApplicationUserId = a.ApplicationUser.Id,
+                    PatientSSN = a.ApplicationUser.PatientSSN,
+                    BloodType = a.BloodType,
+                    Operations = a.Operations,
+                    Sensitivities = a.Sensitivities,
+                    Diseases = a.Diseases,
+                    FullName = a.ApplicationUser.FullName
+
+                })
+                .ToListAsync();
+
+            return medicalHistories;
         }
 
         // GET: api/MedicalHistories/5
         [HttpGet("{id}")]
         public async Task<ActionResult<MedicalHistoryViewModel>> GetMedicalHistory(string id)
         {
+            if (!MedicalHistoryUserExists(id))
+            {
+                return NotFound("This user doesn't have any medical history yet.");
+            }
+
             var medicalHistoryInDb = await _context.MedicalHistory
                 .Include(m => m.ApplicationUser)
                 .Include(m => m.Operations)
                 .Include(m => m.Diseases)
                 .Include(m => m.Sensitivities)
                 .FirstOrDefaultAsync(m => m.ApplicationUserId == id);
-
-            if (medicalHistoryInDb == null)
-            {
-                return NotFound("This user doesn't have any medical history yet.");
-            }
-
+            
             var medicalHistory = new MedicalHistoryViewModel
             {
                 Id = medicalHistoryInDb.Id,
@@ -74,6 +89,11 @@ namespace MedicalInformationSystem.Controllers
             if (id != medicalHistory.ApplicationUserId)
             {
                 return BadRequest();
+            }
+
+            if (!MedicalHistoryUserExists(id))
+            {
+                return NotFound("This user doesn't have any medical history yet.");
             }
 
             var medicalHistoryInDb = new MedicalHistory
@@ -149,6 +169,11 @@ namespace MedicalInformationSystem.Controllers
         [HttpPost]
         public async Task<ActionResult<MedicalHistory>> PostMedicalHistory(MedicalHistoryViewModel _medicalHistory)
         {
+            if (!MedicalHistoryUserExists(_medicalHistory.ApplicationUserId))
+            {
+                return NotFound("This user doesn't have any medical history yet.");
+            }
+
             var medicalHistory = new MedicalHistory
             {
                 BloodType = _medicalHistory.BloodType,
