@@ -25,23 +25,43 @@ namespace MedicalInformationSystem.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MedicalHistory>>> GetMedicalHistory()
         {
-            return await _context.MedicalHistory.ToListAsync();
+
+            return await _context.MedicalHistory
+                .Include(m => m.ApplicationUser)
+                .Include(m => m.Operations)
+                .Include(m => m.Diseases)
+                .Include(m => m.Sensitivities).ToListAsync();
         }
 
         // GET: api/MedicalHistories/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<MedicalHistory>> GetMedicalHistory(string id)
+        public async Task<ActionResult<MedicalHistoryViewModel>> GetMedicalHistory(string id)
         {
-            var medicalHistory = await _context.MedicalHistory
+            var medicalHistoryInDb = await _context.MedicalHistory
                 .Include(m => m.ApplicationUser)
                 .Include(m => m.Operations)
                 .Include(m => m.Diseases)
                 .Include(m => m.Sensitivities)
                 .FirstOrDefaultAsync(m => m.ApplicationUserId == id);
-            if (medicalHistory == null)
+
+            if (medicalHistoryInDb == null)
             {
                 return NotFound("This user doesn't have any medical history yet.");
             }
+
+            var medicalHistory = new MedicalHistoryViewModel
+            {
+                Id = medicalHistoryInDb.Id,
+                PatientSSN = medicalHistoryInDb.ApplicationUser.PatientSSN,
+                FullName = medicalHistoryInDb.ApplicationUser.FullName,
+                BloodType = medicalHistoryInDb.BloodType,
+                Diseases = medicalHistoryInDb.Diseases,
+                Sensitivities = medicalHistoryInDb.Sensitivities,
+                Operations = medicalHistoryInDb.Operations,
+                ApplicationUserId = medicalHistoryInDb.ApplicationUserId
+            };
+
+            
 
             return medicalHistory;
         }
@@ -49,19 +69,62 @@ namespace MedicalInformationSystem.Controllers
         // PUT: api/MedicalHistories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMedicalHistory(string id, MedicalHistory medicalHistory)
+        public async Task<IActionResult> PutMedicalHistory(string id, MedicalHistoryViewModel medicalHistory)
         {
             if (id != medicalHistory.ApplicationUserId)
             {
                 return BadRequest();
             }
-            //var _medicalHistory = new MedicalHistory
-            //{
-            //    BloodType = medicalHistory.BloodType,
-            //    ApplicationUserId = medicalHistory.ApplicationUserId
-            //};
-            _context.Entry(medicalHistory).State = EntityState.Modified;
 
+            var medicalHistoryInDb = new MedicalHistory
+            {
+                Id = medicalHistory.Id,
+                BloodType = medicalHistory.BloodType,
+                ApplicationUserId = medicalHistory.ApplicationUserId
+            };
+
+            _context.Entry(medicalHistoryInDb).State = EntityState.Modified;
+
+            if (medicalHistory.Operations != null)
+            {
+                var operations = new List<Operation>();
+                operations.AddRange(medicalHistory.Operations);
+                medicalHistoryInDb.Operations = operations;
+
+
+                foreach (var operation in medicalHistoryInDb.Operations)
+                {
+                    _context.Entry(operation).State = EntityState.Modified;
+                }
+            }
+
+            if (medicalHistory.Sensitivities != null)
+            {
+                var sensitivities = new List<Sensitivity>();
+                sensitivities.AddRange(medicalHistory.Sensitivities);
+                medicalHistoryInDb.Sensitivities = sensitivities;
+
+                foreach (var sensitivity in medicalHistoryInDb.Sensitivities)
+                {
+                    _context.Entry(sensitivity).State = EntityState.Modified;
+                }
+
+            }
+
+            if (medicalHistory.Diseases != null)
+            {
+                var diseases = new List<Disease>();
+                diseases.AddRange(medicalHistory.Diseases);
+                medicalHistoryInDb.Diseases = diseases;
+
+                foreach (var disease in medicalHistoryInDb.Diseases)
+                {
+                    _context.Entry(disease).State = EntityState.Modified;
+                }
+
+            }
+
+            
             try
             {
                 await _context.SaveChangesAsync();
@@ -131,6 +194,7 @@ namespace MedicalInformationSystem.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+            ;
         }
 
         private bool MedicalHistoryUserExists(string id)
