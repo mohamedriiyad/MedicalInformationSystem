@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MedicalInformationSystem.Models;
@@ -10,7 +8,6 @@ using MedicalInformationSystem.Persistant;
 
 namespace MedicalInformationSystem.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
     public class MedicalHistoriesController : ControllerBase
     {
@@ -23,6 +20,7 @@ namespace MedicalInformationSystem.Controllers
 
         // GET: api/MedicalHistories
         [HttpGet]
+        [Route("api/MedicalHistories/GetMedicalHistory")]
         public async Task<IEnumerable<MedicalHistoryViewModel>> GetMedicalHistory()
         {
             var medicalHistories = await _context.MedicalHistory
@@ -49,7 +47,8 @@ namespace MedicalInformationSystem.Controllers
         }
 
         // GET: api/MedicalHistories/5
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Route("api/MedicalHistories/GetMedicalHistory/{id}")]
         public async Task<ActionResult<MedicalHistoryViewModel>> GetMedicalHistory(string id)
         {
             if (!MedicalHistoryUserExists(id))
@@ -83,7 +82,8 @@ namespace MedicalInformationSystem.Controllers
 
         // PUT: api/MedicalHistories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut]
+        [Route("api/MedicalHistories/PutMedicalHistory/{id}")]
         public async Task<IActionResult> PutMedicalHistory(string id, MedicalHistoryViewModel medicalHistory)
         {
             if (id != medicalHistory.ApplicationUserId)
@@ -167,44 +167,46 @@ namespace MedicalInformationSystem.Controllers
         // POST: api/MedicalHistories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<MedicalHistory>> PostMedicalHistory(MedicalHistoryViewModel _medicalHistory)
+        [Route("api/MedicalHistories/PostMedicalHistory")]
+        public async Task<ActionResult<MedicalHistory>> PostMedicalHistory(MedicalHistoryViewModel medicalHistoryModel)
         {
             var medicalHistory = new MedicalHistory
             {
-                BloodType = _medicalHistory.BloodType,
-                ApplicationUserId = _medicalHistory.ApplicationUserId
+                BloodType = medicalHistoryModel.BloodType,
+                ApplicationUserId = medicalHistoryModel.ApplicationUserId
             };
             _context.MedicalHistory.Add(medicalHistory);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            foreach (var operation in _medicalHistory.Operations)
+            foreach (var operation in medicalHistoryModel.Operations)
             {
                 operation.MedicalHistoryId = medicalHistory.Id;
             }
 
-            foreach (var disease in _medicalHistory.Diseases)
+            foreach (var disease in medicalHistoryModel.Diseases)
             {
                 disease.MedicalHistoryId = medicalHistory.Id;
             }
 
-            foreach (var sensitivity in _medicalHistory.Sensitivities)
+            foreach (var sensitivity in medicalHistoryModel.Sensitivities)
             {
                 sensitivity.MedicalHistoryId = medicalHistory.Id;
             }
             
-            _context.Operations.AddRange(_medicalHistory.Operations);
-            _context.Sensitivities.AddRange(_medicalHistory.Sensitivities);
-            _context.Diseases.AddRange(_medicalHistory.Diseases);
+            _context.Operations.AddRange(medicalHistoryModel.Operations);
+            _context.Sensitivities.AddRange(medicalHistoryModel.Sensitivities);
+            _context.Diseases.AddRange(medicalHistoryModel.Diseases);
 
-            _context.SaveChanges();
-            return CreatedAtAction("GetMedicalHistory", new { id = medicalHistory.Id }, medicalHistory);
+            await _context.SaveChangesAsync();
+            return Ok();
         }
 
         // DELETE: api/MedicalHistories/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMedicalHistory(int id)
+        [HttpDelete]
+        [Route("api/MedicalHistories/DeleteMedicalHistory/{id}")]
+        public async Task<IActionResult> DeleteMedicalHistory(string id)
         {
-            var medicalHistory = await _context.MedicalHistory.FindAsync(id);
+            var medicalHistory = await _context.MedicalHistory.FirstOrDefaultAsync(m=>m.ApplicationUserId == id);
             if (medicalHistory == null)
             {
                 return NotFound();
@@ -214,7 +216,6 @@ namespace MedicalInformationSystem.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-            ;
         }
 
         private bool MedicalHistoryUserExists(string id)

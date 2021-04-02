@@ -14,12 +14,12 @@ namespace MedicalInformationSystem.Controllers
 {
     public class ApplicationUserController:Controller
     {
-        private readonly UserManager<ApplicationUser> usermanager;
-        private readonly RoleManager<IdentityRole> rolemanager;
-        public ApplicationUserController(UserManager<ApplicationUser> usermanager, RoleManager<IdentityRole> rolemanager)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        public ApplicationUserController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-            this.usermanager = usermanager;
-            this.rolemanager = rolemanager;
+            this._userManager = userManager;
+            this._roleManager = roleManager;
             
         }
 
@@ -35,31 +35,31 @@ namespace MedicalInformationSystem.Controllers
             {
 
 
-                bool x = await this.rolemanager.RoleExistsAsync("Patient");
+                bool x = await this._roleManager.RoleExistsAsync("Patient");
                 if (!x)
                 {
                     var role = new IdentityRole();
                     role.Name = "Patient";
-                    await rolemanager.CreateAsync(role);
+                    await _roleManager.CreateAsync(role);
 
                 }
 
 
-                bool y = await this.rolemanager.RoleExistsAsync("Admin");
+                bool y = await this._roleManager.RoleExistsAsync("Admin");
                 if (!y)
                 {
                     var role = new IdentityRole();
                     role.Name = "Admin";
-                    await rolemanager.CreateAsync(role);
+                    await _roleManager.CreateAsync(role);
 
                 }
 
-                bool z = await this.rolemanager.RoleExistsAsync("hospital");
+                bool z = await this._roleManager.RoleExistsAsync("hospital");
                 if (!y)
                 {
                     var role = new IdentityRole();
                     role.Name = "hospital";
-                    await rolemanager.CreateAsync(role);
+                    await _roleManager.CreateAsync(role);
 
                 }
 
@@ -81,11 +81,11 @@ namespace MedicalInformationSystem.Controllers
                     RelativeTwoPhoneNumber = model.RelativeTwoPhoneNumber,
                     City = model.City
                 };
-                var result = await this.usermanager.CreateAsync(User, model.Password);
+                var result = await this._userManager.CreateAsync(User, model.Password);
 
                 if (result.Succeeded)
                 {
-                    var addRole = await this.usermanager.AddToRoleAsync(User, model.Role);
+                    var addRole = await this._userManager.AddToRoleAsync(User, model.Role);
                     return Ok(result);
                 }
                 else
@@ -117,10 +117,10 @@ namespace MedicalInformationSystem.Controllers
         {
 
 
-            var user = usermanager.Users.FirstOrDefault(e => e.PatientSSN == model.PatientSSN);
-            if (user != null && await usermanager.CheckPasswordAsync(user, model.Password)) // valid user //
+            var user = _userManager.Users.FirstOrDefault(e => e.PatientSSN == model.PatientSSN);
+            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password)) // valid user //
             {
-                var role = await usermanager.GetRolesAsync(user);
+                var role = await _userManager.GetRolesAsync(user);
 
                 IdentityOptions _options = new IdentityOptions();
 
