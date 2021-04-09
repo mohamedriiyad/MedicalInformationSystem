@@ -127,8 +127,8 @@ namespace MedicalInformationSystem.Controllers
                 var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"));
                 var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
                 var tokeOptions = new JwtSecurityToken(
-                issuer: "http://localhost:4200",
-                audience: "http://localhost:4200",
+                issuer: "https://localhost:44309/",
+                audience: "https://localhost:44309/",
                  claims: new List<Claim>() {
                 new Claim(_options.ClaimsIdentity.RoleClaimType , role.FirstOrDefault())
 
