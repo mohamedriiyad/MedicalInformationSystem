@@ -10,6 +10,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
+using MedicalInformationSystem.Helper;
 using Microsoft.AspNetCore.Authorization;
 
 namespace MedicalInformationSystem.Controllers
@@ -32,15 +34,6 @@ namespace MedicalInformationSystem.Controllers
 
 
         }
-
-
-
-
-
-
-
-
-
 
 
         [HttpPost]
@@ -169,21 +162,41 @@ namespace MedicalInformationSystem.Controllers
         }
 
 
-
-
-
-
-
-      /*
-        [Route("api/ApplicationUser/gethospitaldata/{id}")]
-        public async Task<IActionResult> gethospitaldata(int id)
+        [HttpPost, DisableRequestSizeLimit]
+        [Route("api/ApplicationUser/UploadFiles")]
+        public IActionResult UploadFiles()
         {
-            var hospital = await this.context.hospitals.FindAsync(id);
-            return Ok(hospital);
+            try
+            {
+                var files = Request.Form.Files.ToList();
+                var folderName = Path.Combine("Resources", "Files");
+                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
 
+                if (files.Any(f => f.Length == 0))
+                    return BadRequest("There is no files or empty files");
 
+                FileHelper.UploadAll(files,pathToSave);
+                return Ok("All files are UPLOADED SUCCESSFULLY!");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex}");
+            }
         }
-      */
+
+
+
+
+        /*
+          [Route("api/ApplicationUser/gethospitaldata/{id}")]
+          public async Task<IActionResult> gethospitaldata(int id)
+          {
+              var hospital = await this.context.hospitals.FindAsync(id);
+              return Ok(hospital);
+
+
+          }
+        */
 
 
 
