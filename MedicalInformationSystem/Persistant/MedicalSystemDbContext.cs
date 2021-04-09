@@ -22,6 +22,7 @@ namespace MedicalInformationSystem.Persistant
         public DbSet<Operation> Operations  { get; set; }
         public DbSet<Disease> Diseases { get; set; }
         public DbSet<Sensitivity> Sensitivities { get; set; }
+        public DbSet<HospitalModel> hospitals { get; set; }
 
 
     }
