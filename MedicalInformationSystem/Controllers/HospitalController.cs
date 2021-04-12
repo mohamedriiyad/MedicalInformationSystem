@@ -13,6 +13,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using MedicalInformationSystem.Helper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace MedicalInformationSystem.Controllers
 {
@@ -39,7 +40,7 @@ namespace MedicalInformationSystem.Controllers
         [HttpPost]
         [Route("api/ApplicationUser/posthospital")]
 
-        public async Task<IActionResult> postUser([FromBody] HospitalModel model) // from from in frontend //
+        public async Task<IActionResult> PostUser([FromBody] HospitalSignUpModel model) // from from in frontend //
         {
 
 
@@ -78,7 +79,7 @@ namespace MedicalInformationSystem.Controllers
             {
 
 
-                var Hospital = new ApplicationUser()
+                var hospital = new ApplicationUser()
                 {
                     Email = model.Email,
                     UserName = model.Email,
@@ -87,21 +88,39 @@ namespace MedicalInformationSystem.Controllers
                 };
 
 
-                var result = await this.usermanager.CreateAsync(Hospital, model.Password);
+                var result = await usermanager.CreateAsync(hospital, model.Password);
              
                 if (result.Succeeded)
                 {
-                    await context.hospitals.AddAsync(model);
+                    await usermanager.AddToRoleAsync(hospital, "hospital");
+                    var files = model.Files.Select(file => new HospitalFile {FilePath = file.FilePath, HospitalModelId = file.HospitalId}).ToList();
+                   
+                    var hospitalInDb = new HospitalModel
+                    {
+                        Email = model.Email,
+                        ApplicationUserId = hospital.Id,
+                        Files = files,
+                        Location = model.Location,
+                        Name = model.Name,
+                        Password = model.Password
+                    };
+                    await context.Hospitals.AddAsync(hospitalInDb);
                     await context.SaveChangesAsync();
-                    var addRole = await this.usermanager.AddToRoleAsync(Hospital, "hospital");
+
+                    
+                    //context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.HospitalFiles ON");
+                    //context.SaveChanges();
+                    //await context.HospitalFiles.AddRangeAsync(model.Files);
+                    //await context.SaveChangesAsync();
+                    
+                    //context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.HospitalFiles OFF");
+                    //context.SaveChanges();
+
                     return Ok(result);
                 }
-                else
-                {
-                    var errors = result.Errors.Select(e => e.Description);
-                    var message = "Invalied social security Number";
-                    return BadRequest(errors);
-                }
+
+                var errors = result.Errors.Select(e => e.Description);
+                return BadRequest(errors);
             }
 
 
@@ -191,7 +210,7 @@ namespace MedicalInformationSystem.Controllers
           [Route("api/ApplicationUser/gethospitaldata/{id}")]
           public async Task<IActionResult> gethospitaldata(int id)
           {
-              var hospital = await this.context.hospitals.FindAsync(id);
+              var hospital = await this.context.Hospitals.FindAsync(id);
               return Ok(hospital);
 
 

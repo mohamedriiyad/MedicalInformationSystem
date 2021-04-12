@@ -65,7 +65,7 @@ namespace MedicalInformationSystem.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("hospitals");
+                    b.ToTable("Hospitals");
                 });
 
             modelBuilder.Entity("MedicalInformationSystem.Models.MedicalHistory", b =>

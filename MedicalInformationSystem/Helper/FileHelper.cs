@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using MedicalInformationSystem.Persistant;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
 
@@ -8,24 +8,31 @@ namespace MedicalInformationSystem.Helper
 {
     public class FileHelper
     {
-        private readonly MedicalSystemDbContext _context;
-
-        public FileHelper(MedicalSystemDbContext context)
+        public static List<string> UploadAll(List<IFormFile> formFiles, string pathToSave)
         {
-            _context = context;
-        }
-
-        public static void UploadAll(List<IFormFile> files, string pathToSave)
-        {
-            foreach (var file in files)
+            var files = new List<string>();
+            foreach (var file in formFiles)
             {
                 var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.ToString()
                     .Trim('"');
-                var fullPath = Path.Combine(pathToSave, fileName);
+                var fileExtension = Path.GetExtension(fileName);
+                var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+
+
+                var fullPath = Path.Combine(pathToSave, fileNameWithoutExtension+Guid.NewGuid().ToString()+fileExtension);
+
+                if (!Directory.Exists(pathToSave))
+                {
+                    Directory.CreateDirectory(pathToSave);
+                }
 
                 using var stream = new FileStream(fullPath,FileMode.Create);
                 file.CopyTo(stream);
+
+                files.Add(fullPath);
             }
+
+            return files;
         }
     }
 }

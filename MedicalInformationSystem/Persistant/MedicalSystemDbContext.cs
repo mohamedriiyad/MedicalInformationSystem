@@ -1,9 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using MedicalInformationSystem.Models;
 
 namespace MedicalInformationSystem.Persistant
@@ -22,7 +18,9 @@ namespace MedicalInformationSystem.Persistant
         public DbSet<Operation> Operations  { get; set; }
         public DbSet<Disease> Diseases { get; set; }
         public DbSet<Sensitivity> Sensitivities { get; set; }
-        public DbSet<HospitalModel> hospitals { get; set; }
+        public DbSet<HospitalModel> Hospitals { get; set; }
+        public DbSet<HospitalFile> HospitalFiles { get; set; }
+        public DbSet<HospitalConfirmation> HospitalConfirmations { get; set; }
 
 
     }

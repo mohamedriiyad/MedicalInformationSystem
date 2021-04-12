@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MedicalInformationSystem.Migrations
 {
     [DbContext(typeof(MedicalSystemDbContext))]
-    [Migration("20210408162934_addhospital2")]
-    partial class addhospital2
+    [Migration("20210409153503_MakeARelationBetweenUserAndHospitals")]
+    partial class MakeARelationBetweenUserAndHospitals
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -48,7 +48,13 @@ namespace MedicalInformationSystem.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("File")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Location")
@@ -61,6 +67,8 @@ namespace MedicalInformationSystem.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Hospitals");
                 });
@@ -385,6 +393,15 @@ namespace MedicalInformationSystem.Migrations
                         .HasForeignKey("MedicalHistoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MedicalInformationSystem.Models.HospitalModel", b =>
+                {
+                    b.HasOne("MedicalInformationSystem.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("MedicalInformationSystem.Models.MedicalHistory", b =>

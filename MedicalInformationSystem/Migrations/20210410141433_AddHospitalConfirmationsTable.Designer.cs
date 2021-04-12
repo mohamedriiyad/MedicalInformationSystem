@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MedicalInformationSystem.Migrations
 {
     [DbContext(typeof(MedicalSystemDbContext))]
-    [Migration("20210408162934_addhospital2")]
-    partial class addhospital2
+    [Migration("20210410141433_AddHospitalConfirmationsTable")]
+    partial class AddHospitalConfirmationsTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -41,7 +41,7 @@ namespace MedicalInformationSystem.Migrations
                     b.ToTable("Diseases");
                 });
 
-            modelBuilder.Entity("MedicalInformationSystem.Models.HospitalModel", b =>
+            modelBuilder.Entity("MedicalInformationSystem.Models.HospitalConfirmation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -61,6 +61,60 @@ namespace MedicalInformationSystem.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.ToTable("HospitalConfirmations");
+                });
+
+            modelBuilder.Entity("MedicalInformationSystem.Models.HospitalFile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("FilePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("HospitalConfirmationId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("HospitalModelId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HospitalConfirmationId");
+
+                    b.HasIndex("HospitalModelId");
+
+                    b.ToTable("HospitalFiles");
+                });
+
+            modelBuilder.Entity("MedicalInformationSystem.Models.HospitalModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Hospitals");
                 });
@@ -387,6 +441,30 @@ namespace MedicalInformationSystem.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MedicalInformationSystem.Models.HospitalFile", b =>
+                {
+                    b.HasOne("MedicalInformationSystem.Models.HospitalConfirmation", "HospitalConfirmation")
+                        .WithMany("Files")
+                        .HasForeignKey("HospitalConfirmationId");
+
+                    b.HasOne("MedicalInformationSystem.Models.HospitalModel", "Hospital")
+                        .WithMany("Files")
+                        .HasForeignKey("HospitalModelId");
+
+                    b.Navigation("Hospital");
+
+                    b.Navigation("HospitalConfirmation");
+                });
+
+            modelBuilder.Entity("MedicalInformationSystem.Models.HospitalModel", b =>
+                {
+                    b.HasOne("MedicalInformationSystem.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.Navigation("ApplicationUser");
+                });
+
             modelBuilder.Entity("MedicalInformationSystem.Models.MedicalHistory", b =>
                 {
                     b.HasOne("MedicalInformationSystem.Models.ApplicationUser", "ApplicationUser")
@@ -463,6 +541,16 @@ namespace MedicalInformationSystem.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MedicalInformationSystem.Models.HospitalConfirmation", b =>
+                {
+                    b.Navigation("Files");
+                });
+
+            modelBuilder.Entity("MedicalInformationSystem.Models.HospitalModel", b =>
+                {
+                    b.Navigation("Files");
                 });
 
             modelBuilder.Entity("MedicalInformationSystem.Models.MedicalHistory", b =>

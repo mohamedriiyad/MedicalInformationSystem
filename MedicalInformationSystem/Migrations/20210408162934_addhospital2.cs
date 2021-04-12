@@ -8,7 +8,7 @@ namespace MedicalInformationSystem.Migrations
         {
             migrationBuilder.AlterColumn<string>(
                 name: "Password",
-                table: "hospitals",
+                table: "Hospitals",
                 type: "nvarchar(max)",
                 nullable: true,
                 oldClrType: typeof(string),
@@ -16,7 +16,7 @@ namespace MedicalInformationSystem.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "Name",
-                table: "hospitals",
+                table: "Hospitals",
                 type: "nvarchar(max)",
                 nullable: true,
                 oldClrType: typeof(string),
@@ -24,7 +24,7 @@ namespace MedicalInformationSystem.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "Location",
-                table: "hospitals",
+                table: "Hospitals",
                 type: "nvarchar(max)",
                 nullable: true,
                 oldClrType: typeof(string),
@@ -32,7 +32,7 @@ namespace MedicalInformationSystem.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "Email",
-                table: "hospitals",
+                table: "Hospitals",
                 type: "nvarchar(max)",
                 nullable: true,
                 oldClrType: typeof(string),
@@ -43,7 +43,7 @@ namespace MedicalInformationSystem.Migrations
         {
             migrationBuilder.AlterColumn<string>(
                 name: "Password",
-                table: "hospitals",
+                table: "Hospitals",
                 type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "",
@@ -53,7 +53,7 @@ namespace MedicalInformationSystem.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "Name",
-                table: "hospitals",
+                table: "Hospitals",
                 type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "",
@@ -63,7 +63,7 @@ namespace MedicalInformationSystem.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "Location",
-                table: "hospitals",
+                table: "Hospitals",
                 type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "",
@@ -73,7 +73,7 @@ namespace MedicalInformationSystem.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "Email",
-                table: "hospitals",
+                table: "Hospitals",
                 type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "",

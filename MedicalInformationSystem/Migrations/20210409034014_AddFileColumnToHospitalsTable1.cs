@@ -8,7 +8,7 @@ namespace MedicalInformationSystem.Migrations
         {
             migrationBuilder.AddColumn<string>(
                 name: "File",
-                table: "hospitals",
+                table: "Hospitals",
                 type: "nvarchar(max)",
                 nullable: true);
         }
@@ -17,7 +17,7 @@ namespace MedicalInformationSystem.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "File",
-                table: "hospitals");
+                table: "Hospitals");
         }
     }
 }
