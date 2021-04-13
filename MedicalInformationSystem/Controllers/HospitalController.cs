@@ -10,27 +10,23 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
-using System.IO;
-using MedicalInformationSystem.Helper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
 
 namespace MedicalInformationSystem.Controllers
 {
     public class HospitalController:Controller
     {
 
-        private readonly UserManager<ApplicationUser> usermanager;
-        private readonly MedicalSystemDbContext context;
-        private readonly RoleManager<IdentityRole> rolemanager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly MedicalSystemDbContext _context;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
 
-        public HospitalController(UserManager<ApplicationUser> usermanager , MedicalSystemDbContext context , RoleManager<IdentityRole> rolemanager)
+        public HospitalController(UserManager<ApplicationUser> userManager , MedicalSystemDbContext context , RoleManager<IdentityRole> roleManager)
         {
 
-            this.usermanager = usermanager;
-            this.context = context;
-            this.rolemanager = rolemanager;
+            _userManager = userManager;
+            _context = context;
+            _roleManager = roleManager;
 
 
 
@@ -44,31 +40,28 @@ namespace MedicalInformationSystem.Controllers
         {
 
 
-            bool x = await this.rolemanager.RoleExistsAsync("Patient");
+            bool x = await this._roleManager.RoleExistsAsync("Patient");
             if (!x)
             {
-                var role = new IdentityRole();
-                role.Name = "Patient";
-                await rolemanager.CreateAsync(role);
+                var role = new IdentityRole {Name = "Patient"};
+                await _roleManager.CreateAsync(role);
 
             }
 
 
-            bool y = await this.rolemanager.RoleExistsAsync("Admin");
+            bool y = await this._roleManager.RoleExistsAsync("Admin");
             if (!y)
             {
-                var role = new IdentityRole();
-                role.Name = "Admin";
-                await rolemanager.CreateAsync(role);
+                var role = new IdentityRole {Name = "Admin"};
+                await _roleManager.CreateAsync(role);
 
             }
 
-            bool z = await this.rolemanager.RoleExistsAsync("hospital");
-            if (!y)
+            bool z = await this._roleManager.RoleExistsAsync("hospital");
+            if (!z)
             {
-                var role = new IdentityRole();
-                role.Name = "hospital";
-                await rolemanager.CreateAsync(role);
+                var role = new IdentityRole {Name = "hospital"};
+                await _roleManager.CreateAsync(role);
 
             }
 
@@ -88,11 +81,11 @@ namespace MedicalInformationSystem.Controllers
                 };
 
 
-                var result = await usermanager.CreateAsync(hospital, model.Password);
+                var result = await _userManager.CreateAsync(hospital, model.Password);
              
                 if (result.Succeeded)
                 {
-                    await usermanager.AddToRoleAsync(hospital, "hospital");
+                    await _userManager.AddToRoleAsync(hospital, "hospital");
                     var files = model.Files.Select(file => new HospitalFile {FilePath = file.FilePath, HospitalModelId = file.HospitalId}).ToList();
                    
                     var hospitalInDb = new HospitalModel
@@ -104,8 +97,8 @@ namespace MedicalInformationSystem.Controllers
                         Name = model.Name,
                         Password = model.Password
                     };
-                    await context.Hospitals.AddAsync(hospitalInDb);
-                    await context.SaveChangesAsync();
+                    await _context.Hospitals.AddAsync(hospitalInDb);
+                    await _context.SaveChangesAsync();
 
                     
                     //context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.HospitalFiles ON");
@@ -130,20 +123,20 @@ namespace MedicalInformationSystem.Controllers
 
 
         [HttpPost]
-        [Route("api/ApplicationUser/Loginhospital")]
+        [Route("api/ApplicationUser/LoginHospital")]
 
         public async Task<IActionResult> Login([FromBody] HospitalLogin model)
         {
 
 
-            var user = usermanager.Users.FirstOrDefault(e => e.Email == model.Email);
-            if (user != null && await usermanager.CheckPasswordAsync(user, model.Password)) // valid user //
+            var user = _userManager.Users.FirstOrDefault(e => e.Email == model.Email);
+            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password)) // valid user //
             {
-                var role = await usermanager.GetRolesAsync(user);
+                var role = await _userManager.GetRolesAsync(user);
 
 
 
-                IdentityOptions _options = new IdentityOptions();
+                IdentityOptions options = new IdentityOptions();
 
                 var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"));
                 var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
@@ -152,7 +145,7 @@ namespace MedicalInformationSystem.Controllers
                 audience: "https://localhost:44309/",
                  claims: new List<Claim>()
                  {
-                       new Claim(_options.ClaimsIdentity.RoleClaimType , role.FirstOrDefault())
+                       new Claim(options.ClaimsIdentity.RoleClaimType , role.FirstOrDefault())
                  },
 
 
@@ -168,40 +161,31 @@ namespace MedicalInformationSystem.Controllers
 
             }
 
-
-            else
-            {
-
-                return BadRequest(new { message = "patientSSN or password is incorrect." });
-            }
-
-
-
-
+            return BadRequest(new { message = "patientSSN or password is incorrect." });
         }
 
 
-        [HttpPost, DisableRequestSizeLimit]
-        [Route("api/ApplicationUser/UploadFiles")]
-        public IActionResult UploadFiles()
-        {
-            try
-            {
-                var files = Request.Form.Files.ToList();
-                var folderName = Path.Combine("Resources", "Files");
-                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+        //[HttpPost, DisableRequestSizeLimit]
+        //[Route("api/ApplicationUser/UploadFiles")]
+        //public IActionResult UploadFiles()
+        //{
+        //    try
+        //    {
+        //        var files = Request.Form.Files.ToList();
+        //        var folderName = Path.Combine("Resources", "Files");
+        //        var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
 
-                if (files.Any(f => f.Length == 0))
-                    return BadRequest("There is no files or empty files");
+        //        if (files.Any(f => f.Length == 0))
+        //            return BadRequest("There is no files or empty files");
 
-                FileHelper.UploadAll(files,pathToSave);
-                return Ok("All files are UPLOADED SUCCESSFULLY!");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex}");
-            }
-        }
+        //        FileHelper.UploadAll(files,pathToSave);
+        //        return Ok("All files are UPLOADED SUCCESSFULLY!");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, $"Internal server error: {ex}");
+        //    }
+        //}
 
 
 
