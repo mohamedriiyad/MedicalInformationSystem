@@ -22,6 +22,14 @@ namespace MedicalInformationSystem.Persistant
         public DbSet<HospitalFile> HospitalFiles { get; set; }
         public DbSet<HospitalConfirmation> HospitalConfirmations { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<HospitalFile>()
+                .HasOne(f => f.HospitalModel)
+                .WithMany(m => m.Files)
+                .HasForeignKey(f => f.HospitalModelId);
 
+            base.OnModelCreating(builder);
+        }
     }
 }

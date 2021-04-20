@@ -23,12 +23,9 @@ namespace MedicalInformationSystem.Controllers
 
         public HospitalController(UserManager<ApplicationUser> userManager , MedicalSystemDbContext context , RoleManager<IdentityRole> roleManager)
         {
-
             _userManager = userManager;
             _context = context;
             _roleManager = roleManager;
-
-
 
         }
 
@@ -49,7 +46,7 @@ namespace MedicalInformationSystem.Controllers
             }
 
 
-            bool y = await this._roleManager.RoleExistsAsync("Admin");
+            bool y = await _roleManager.RoleExistsAsync("Admin");
             if (!y)
             {
                 var role = new IdentityRole {Name = "Admin"};
@@ -57,7 +54,7 @@ namespace MedicalInformationSystem.Controllers
 
             }
 
-            bool z = await this._roleManager.RoleExistsAsync("hospital");
+            bool z = await _roleManager.RoleExistsAsync("hospital");
             if (!z)
             {
                 var role = new IdentityRole {Name = "hospital"};
