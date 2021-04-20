@@ -10,55 +10,55 @@ namespace MedicalInformationSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DiseasesController : ControllerBase
+    public class OperationsController : ControllerBase
     {
         private readonly MedicalSystemDbContext _context;
 
-        public DiseasesController(MedicalSystemDbContext context)
+        public OperationsController(MedicalSystemDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/Diseases
+        // GET: api/Operations
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Disease>>> GetDiseases(string id)
+        public async Task<ActionResult<IEnumerable<Operation>>> GetOperations(string id)
         {
             var medicalHistory = _context.MedicalHistory.FirstOrDefault(m => m.ApplicationUserId == id);
             if (medicalHistory == null)
             {
-                return BadRequest("There is no diseases for this Patient");
+                return BadRequest("There is no operations for this Patient");
             }
 
-            return await _context.Diseases
-                .Where(d=>d.MedicalHistoryId == medicalHistory.Id)
+            return await _context.Operations
+                .Where(d => d.MedicalHistoryId == medicalHistory.Id)
                 .ToListAsync();
         }
 
-        // GET: api/Diseases/5
+        // GET: api/Operations/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Disease>> GetDisease(int id)
+        public async Task<ActionResult<Operation>> GetOperation(int id)
         {
-            var disease = await _context.Diseases.FindAsync(id);
+            var operation = await _context.Operations.FindAsync(id);
 
-            if (disease == null)
+            if (operation == null)
             {
                 return NotFound();
             }
 
-            return disease;
+            return operation;
         }
 
-        // PUT: api/Diseases/5
+        // PUT: api/Operations/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDisease(int id, Disease disease)
+        public async Task<IActionResult> PutOperation(int id, Operation operation)
         {
-            if (id != disease.Id)
+            if (id != operation.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(disease).State = EntityState.Modified;
+            _context.Entry(operation).State = EntityState.Modified;
 
             try
             {
@@ -66,7 +66,7 @@ namespace MedicalInformationSystem.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!DiseaseExists(id))
+                if (!OperationExists(id))
                 {
                     return NotFound();
                 }
@@ -77,10 +77,10 @@ namespace MedicalInformationSystem.Controllers
             return NoContent();
         }
 
-        // POST: api/Diseases
+        // POST: api/Operations
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Disease>> PostDisease(string id, Disease disease)
+        public async Task<ActionResult<Operation>> PostOperation(string id, Operation operation)
         {
             var medicalHistory = _context.MedicalHistory.FirstOrDefault(m => m.ApplicationUserId == id);
             if (medicalHistory == null)
@@ -88,33 +88,32 @@ namespace MedicalInformationSystem.Controllers
                 return BadRequest("There is no diseases for this Patient");
             }
 
-            disease.MedicalHistoryId = medicalHistory.Id;
-
-            _context.Diseases.Add(disease);
+            operation.MedicalHistoryId = medicalHistory.Id;
+            _context.Operations.Add(operation);
             await _context.SaveChangesAsync();
 
             return Ok();
         }
 
-        // DELETE: api/Diseases/5
+        // DELETE: api/Operations/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDisease(int id)
+        public async Task<IActionResult> DeleteOperation(int id)
         {
-            var disease = await _context.Diseases.FindAsync(id);
-            if (disease == null)
+            var operation = await _context.Operations.FindAsync(id);
+            if (operation == null)
             {
                 return NotFound();
             }
 
-            _context.Diseases.Remove(disease);
+            _context.Operations.Remove(operation);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool DiseaseExists(int id)
+        private bool OperationExists(int id)
         {
-            return _context.Diseases.Any(e => e.Id == id);
+            return _context.Operations.Any(e => e.Id == id);
         }
     }
 }
