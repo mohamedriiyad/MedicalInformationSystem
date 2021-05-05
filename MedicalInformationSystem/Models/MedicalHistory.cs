@@ -13,5 +13,7 @@ namespace MedicalInformationSystem.Models
         public virtual ICollection<Sensitivity> Sensitivities { get; set; }
         public virtual ICollection<Disease> Diseases { get; set; }
         public virtual ICollection<Operation> Operations { get; set; }
+        public virtual ICollection<Medicine> Medicines { get; set; }
+        public virtual ICollection<Test> Tests { get; set; }
     }
 }

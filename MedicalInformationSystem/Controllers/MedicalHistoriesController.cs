@@ -28,6 +28,8 @@ namespace MedicalInformationSystem.Controllers
                 .Include(m => m.Operations)
                 .Include(m => m.Diseases)
                 .Include(m => m.Sensitivities)
+                .Include(m => m.Medicines)
+                .Include(m => m.Tests)
                 .Select(a => new MedicalHistoryViewModel
                 {
 
@@ -38,7 +40,9 @@ namespace MedicalInformationSystem.Controllers
                     Operations = a.Operations,
                     Sensitivities = a.Sensitivities,
                     Diseases = a.Diseases,
-                    FullName = a.ApplicationUser.FullName
+                    FullName = a.ApplicationUser.FullName,
+                    Tests = a.Tests,
+                    Medicines = a.Medicines
 
                 })
                 .ToListAsync();

@@ -14,6 +14,8 @@ namespace MedicalInformationSystem.Models
         public string ApplicationUserId { get; set; }
         public ICollection<Operation> Operations { get; set; }
         public ICollection<Disease> Diseases { get; set; }
+        public ICollection<Medicine> Medicines { get; set; }
+        public ICollection<Test> Tests { get; set; }
         public ICollection<Sensitivity> Sensitivities { get; set; }
     }
 

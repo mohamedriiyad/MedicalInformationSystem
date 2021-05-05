@@ -4,14 +4,16 @@ using MedicalInformationSystem.Persistant;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MedicalInformationSystem.Migrations
 {
     [DbContext(typeof(MedicalSystemDbContext))]
-    partial class MedicalSystemDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210430133628_AddMedicinesTable")]
+    partial class AddMedicinesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,9 +27,6 @@ namespace MedicalInformationSystem.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Cause")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("MedicalHistoryId")
                         .HasColumnType("int");
@@ -217,32 +216,6 @@ namespace MedicalInformationSystem.Migrations
                     b.HasIndex("MedicalHistoryId");
 
                     b.ToTable("Sensitivities");
-                });
-
-            modelBuilder.Entity("MedicalInformationSystem.Models.Test", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Image")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("MedicalHistoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MedicalHistoryId");
-
-                    b.ToTable("Tests");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -557,15 +530,6 @@ namespace MedicalInformationSystem.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MedicalInformationSystem.Models.Test", b =>
-                {
-                    b.HasOne("MedicalInformationSystem.Models.MedicalHistory", null)
-                        .WithMany("Tests")
-                        .HasForeignKey("MedicalHistoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -636,8 +600,6 @@ namespace MedicalInformationSystem.Migrations
                     b.Navigation("Operations");
 
                     b.Navigation("Sensitivities");
-
-                    b.Navigation("Tests");
                 });
 
             modelBuilder.Entity("MedicalInformationSystem.Models.ApplicationUser", b =>

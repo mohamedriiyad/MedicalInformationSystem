@@ -2,16 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace MedicalInformationSystem.Models
 {
-    public class Test
+    public class TestUploadModel
     {
-        public int  Id { get; set; }
+        public IFormFileCollection Files { get; set; }
         public string Name { get; set; }
         public DateTime? Date { get; set; }
-        public string Image { get; set; }
-        public int MedicalHistoryId { get; set; }
-
     }
 }
