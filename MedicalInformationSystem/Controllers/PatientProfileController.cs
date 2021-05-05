@@ -43,7 +43,7 @@ namespace MedicalInformationSystem.Controllers
        */
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+       
         [Route("api/PatientProfile/GetForAdmin")]
         public string GetForAdmin()
         {
