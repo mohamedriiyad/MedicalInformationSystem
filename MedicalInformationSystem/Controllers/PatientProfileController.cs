@@ -95,6 +95,7 @@ namespace MedicalInformationSystem.Controllers
                 PhoneNumber = user.PhoneNumber,
                 Gender = user.Gender,
                 City = user.City,
+                DateOfBirth = user.DateOfBirth,
                 RealtiveOneName = user.RelativeOneName,
                 RealtiveTwoName = user.RelativeTwoName,
                 RealtiveOnePhone = user.RelativeOnePhoneNumber,
