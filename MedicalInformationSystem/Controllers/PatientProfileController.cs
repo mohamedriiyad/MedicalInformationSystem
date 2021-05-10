@@ -94,7 +94,11 @@ namespace MedicalInformationSystem.Controllers
                 FullName = user.FullName,
                 PhoneNumber = user.PhoneNumber,
                 Gender = user.Gender,
-                City = user.City
+                City = user.City,
+                RealtiveOneName = user.RelativeOneName,
+                RealtiveTwoName = user.RelativeTwoName,
+                RealtiveOnePhone = user.RelativeOnePhoneNumber,
+                RealtiveTwoPhone = user.RelativeTwoPhoneNumber,
             });
         }
 
@@ -119,6 +123,8 @@ namespace MedicalInformationSystem.Controllers
                 RealtiveTwoName = user.RelativeTwoName,
                 RealtiveOnePhone = user.RelativeOnePhoneNumber,
                 RealtiveTwoPhone = user.RelativeTwoPhoneNumber,
+                Gender = user.Gender,
+                City = user.City,
 
             });
         }

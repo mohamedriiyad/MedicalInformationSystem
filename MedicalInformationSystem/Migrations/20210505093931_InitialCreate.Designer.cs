@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MedicalInformationSystem.Migrations
 {
     [DbContext(typeof(MedicalSystemDbContext))]
-    [Migration("20210501063427_AddTestsTable")]
-    partial class AddTestsTable
+    [Migration("20210505093931_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
