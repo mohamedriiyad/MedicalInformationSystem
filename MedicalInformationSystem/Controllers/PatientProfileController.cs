@@ -106,7 +106,7 @@ namespace MedicalInformationSystem.Controllers
 
         [HttpGet]
         [Route("api/PatientProfile/getPatientBySSN/{PatientSSN}")]
-        [Authorize]
+       // [Authorize]
 
         public async Task<IActionResult> getPatientBySSN(string PatientSSN)
         {
@@ -117,6 +117,7 @@ namespace MedicalInformationSystem.Controllers
             }
             return Ok(new
             {
+                Id =  user.Id,
                 FullName = user.FullName,
                 PhoneNumber = user.PhoneNumber,
                 DateOfBirth = user.DateOfBirth,
@@ -145,12 +146,9 @@ namespace MedicalInformationSystem.Controllers
 
 
             user.City = model.City;
-            user.Gender = model.Gender;
-            user.FullName = model.FullName;
             user.RelativeOneName = model.RelativeOneName;
             user.RelativeOnePhoneNumber = model.RelativeOnePhoneNumber;
             user.RelativeTwoName = model.RelativeTwoName;
-            user.PasswordHash = model.Password;
             user.RelativeTwoPhoneNumber = model.RelativeTwoPhoneNumber;
             user.PhoneNumber = model.PhoneNumber;
 
