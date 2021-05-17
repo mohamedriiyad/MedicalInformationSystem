@@ -8,7 +8,6 @@ using MedicalInformationSystem.Persistant;
 
 namespace MedicalInformationSystem.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
     public class MedicinesController : ControllerBase
     {
@@ -20,7 +19,8 @@ namespace MedicalInformationSystem.Controllers
         }
 
         // GET: api/Medicines
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Route("api/Medicines/GetMedicines/{id}")]
         public async Task<ActionResult<IEnumerable<Medicine>>> GetMedicines(string id)
         {
             var medicalHistory = _context.MedicalHistory.FirstOrDefault(m => m.ApplicationUserId == id);
@@ -35,7 +35,8 @@ namespace MedicalInformationSystem.Controllers
         }
 
         // GET: api/Medicines/5
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Route("api/Medicines/GetMedicine/{id}")]
         public async Task<ActionResult<Medicine>> GetMedicine(int id)
         {
             var medicine = await _context.Medicines.FindAsync(id);
@@ -50,7 +51,8 @@ namespace MedicalInformationSystem.Controllers
 
         // PUT: api/Medicines/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut]
+        [Route("api/Medicines/PutMedicine/{id}")]
         public async Task<IActionResult> PutMedicine(int id, Medicine medicine)
         {
             if (id != medicine.Id)
@@ -79,7 +81,8 @@ namespace MedicalInformationSystem.Controllers
 
         // POST: api/Medicines
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("{id}")]
+        [HttpPost]
+        [Route("api/Medicines/PostMedicine/{id}")]
         public async Task<ActionResult<Medicine>> PostMedicine(string id, Medicine medicine)
         {
             var medicalHistory = _context.MedicalHistory.FirstOrDefault(m => m.ApplicationUserId == id);
@@ -97,7 +100,8 @@ namespace MedicalInformationSystem.Controllers
         }
 
         // DELETE: api/Medicines/5
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Route("api/Medicines/DeleteMedicine/{id}")]
         public async Task<IActionResult> DeleteMedicine(int id)
         {
             var medicine = await _context.Medicines.FindAsync(id);

@@ -8,7 +8,6 @@ using MedicalInformationSystem.Persistant;
 
 namespace MedicalInformationSystem.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
     public class DiseasesController : ControllerBase
     {
@@ -20,7 +19,8 @@ namespace MedicalInformationSystem.Controllers
         }
 
         // GET: api/Diseases
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Route("api/Diseases/GetDiseases/{id}")]
         public async Task<ActionResult<IEnumerable<Disease>>> GetDiseases(string id)
         {
             var medicalHistory = _context.MedicalHistory.FirstOrDefault(m => m.ApplicationUserId == id);
@@ -35,7 +35,8 @@ namespace MedicalInformationSystem.Controllers
         }
 
         // GET: api/Diseases/5
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Route("api/Diseases/GetDisease/{id}")]
         public async Task<ActionResult<Disease>> GetDisease(int id)
         {
             var disease = await _context.Diseases.FindAsync(id);
@@ -50,7 +51,8 @@ namespace MedicalInformationSystem.Controllers
 
         // PUT: api/Diseases/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut]
+        [Route("api/Diseases/PutDisease/{id}")]
         public async Task<IActionResult> PutDisease(int id, Disease disease)
         {
             if (id != disease.Id)
@@ -79,7 +81,8 @@ namespace MedicalInformationSystem.Controllers
 
         // POST: api/Diseases
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("{id}")]
+        [HttpPost]
+        [Route("api/Diseases/PostDisease/{id}")]
         public async Task<ActionResult<Disease>> PostDisease(string id, Disease disease)
         {
             var medicalHistory = _context.MedicalHistory.FirstOrDefault(m => m.ApplicationUserId == id);
@@ -97,7 +100,8 @@ namespace MedicalInformationSystem.Controllers
         }
 
         // DELETE: api/Diseases/5
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Route("api/Diseases/DeleteDisease/{id}")]
         public async Task<IActionResult> DeleteDisease(int id)
         {
             var disease = await _context.Diseases.FindAsync(id);

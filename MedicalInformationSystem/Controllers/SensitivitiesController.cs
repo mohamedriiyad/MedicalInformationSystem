@@ -8,7 +8,6 @@ using MedicalInformationSystem.Persistant;
 
 namespace MedicalInformationSystem.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
     public class SensitivitiesController : ControllerBase
     {
@@ -20,7 +19,8 @@ namespace MedicalInformationSystem.Controllers
         }
 
         // GET: api/Sensitivities
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Route("api/Sensitivities/GetSensitivities/{id}")]
         public async Task<ActionResult<IEnumerable<Sensitivity>>> GetSensitivities(string id)
         {
             var medicalHistory = _context.MedicalHistory.FirstOrDefault(m => m.ApplicationUserId == id);
@@ -35,7 +35,8 @@ namespace MedicalInformationSystem.Controllers
         }
 
         // GET: api/Sensitivities/5
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Route("api/Sensitivities/GetSensitivity/{id}")]
         public async Task<ActionResult<Sensitivity>> GetSensitivity(int id)
         {
             var sensitivity = await _context.Sensitivities.FindAsync(id);
@@ -50,7 +51,8 @@ namespace MedicalInformationSystem.Controllers
 
         // PUT: api/Sensitivities/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut]
+        [Route("api/Sensitivities/PutSensitivity/{id}")]
         public async Task<IActionResult> PutSensitivity(int id, Sensitivity sensitivity)
         {
             if (id != sensitivity.Id)
@@ -79,7 +81,8 @@ namespace MedicalInformationSystem.Controllers
 
         // POST: api/Sensitivities
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("{id}")]
+        [HttpPost]
+        [Route("api/Sensitivities/PostSensitivity/{id}")]
         public async Task<ActionResult<Sensitivity>> PostSensitivity(string id, Sensitivity sensitivity)
         {
             var medicalHistory = _context.MedicalHistory.FirstOrDefault(m => m.ApplicationUserId == id);
@@ -96,7 +99,8 @@ namespace MedicalInformationSystem.Controllers
         }
 
         // DELETE: api/Sensitivities/5
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Route("api/Sensitivities/DeleteSensitivity/{id}")]
         public async Task<IActionResult> DeleteSensitivity(int id)
         {
             var sensitivity = await _context.Sensitivities.FindAsync(id);

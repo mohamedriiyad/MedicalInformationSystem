@@ -66,6 +66,8 @@ namespace MedicalInformationSystem.Controllers
                 .Include(m => m.Operations)
                 .Include(m => m.Diseases)
                 .Include(m => m.Sensitivities)
+                .Include(m => m.Tests)
+                .Include(m => m.Medicines)
                 .FirstOrDefaultAsync(m => m.ApplicationUserId == id);
             
             var medicalHistory = new MedicalHistoryViewModel
@@ -77,6 +79,8 @@ namespace MedicalInformationSystem.Controllers
                 Diseases = medicalHistoryInDb.Diseases,
                 Sensitivities = medicalHistoryInDb.Sensitivities,
                 Operations = medicalHistoryInDb.Operations,
+                Tests = medicalHistoryInDb.Tests,
+                Medicines = medicalHistoryInDb.Medicines,
                 ApplicationUserId = medicalHistoryInDb.ApplicationUserId
             };
 

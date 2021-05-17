@@ -8,7 +8,6 @@ using MedicalInformationSystem.Persistant;
 
 namespace MedicalInformationSystem.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
     public class OperationsController : ControllerBase
     {
@@ -20,7 +19,8 @@ namespace MedicalInformationSystem.Controllers
         }
 
         // GET: api/Operations
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Route("api/Operations/GetOperations/{id}")]
         public async Task<ActionResult<IEnumerable<Operation>>> GetOperations(string id)
         {
             var medicalHistory = _context.MedicalHistory.FirstOrDefault(m => m.ApplicationUserId == id);
@@ -35,7 +35,8 @@ namespace MedicalInformationSystem.Controllers
         }
 
         // GET: api/Operations/5
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Route("api/Operations/GetOperation/{id}")]
         public async Task<ActionResult<Operation>> GetOperation(int id)
         {
             var operation = await _context.Operations.FindAsync(id);
@@ -50,7 +51,8 @@ namespace MedicalInformationSystem.Controllers
 
         // PUT: api/Operations/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut]
+        [Route("api/Operations/PutOperation/{id}")]
         public async Task<IActionResult> PutOperation(int id, Operation operation)
         {
             if (id != operation.Id)
@@ -79,7 +81,8 @@ namespace MedicalInformationSystem.Controllers
 
         // POST: api/Operations
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("{id}")]
+        [HttpPost]
+        [Route("api/Operations/PostOperation/{id}")]
         public async Task<ActionResult<Operation>> PostOperation(string id, Operation operation)
         {
             var medicalHistory = _context.MedicalHistory.FirstOrDefault(m => m.ApplicationUserId == id);
@@ -96,7 +99,8 @@ namespace MedicalInformationSystem.Controllers
         }
 
         // DELETE: api/Operations/5
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Route("api/Operations/DeleteOperation/{id}")]
         public async Task<IActionResult> DeleteOperation(int id)
         {
             var operation = await _context.Operations.FindAsync(id);

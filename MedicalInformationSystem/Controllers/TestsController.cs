@@ -11,7 +11,6 @@ using MedicalInformationSystem.Persistant;
 
 namespace MedicalInformationSystem.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
     public class TestsController : ControllerBase
     {
@@ -23,7 +22,8 @@ namespace MedicalInformationSystem.Controllers
         }
 
         // GET: api/Tests
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Route("api/Tests/GetTests/{id}")]
         public async Task<ActionResult<IEnumerable<Test>>> GetTests(string id)
         {
             var medicalHistory = _context.MedicalHistory.FirstOrDefault(m => m.ApplicationUserId == id);
@@ -39,7 +39,8 @@ namespace MedicalInformationSystem.Controllers
         }
 
         // GET: api/Tests/5
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Route("api/Tests/GetTest/{id}")]
         public async Task<ActionResult<Test>> GetTest(int id)
         {
             var test = await _context.Tests.FindAsync(id);
@@ -54,7 +55,8 @@ namespace MedicalInformationSystem.Controllers
 
         // PUT: api/Tests/5
         // To protect from over-posting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut]
+        [Route("api/Tests/PutTest/{id}")]
         public async Task<IActionResult> PutTest(int id, Test test)
         {
             if (id != test.Id)
@@ -84,6 +86,7 @@ namespace MedicalInformationSystem.Controllers
         // POST: api/Tests
         // To protect from over-posting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Route("api/Tests/PostTest/{id}")]
         public async Task<ActionResult<Test>> PostTest(string id, [FromForm]TestUploadModel model)
         {
             var formFiles = model.Files.ToList();
@@ -126,7 +129,8 @@ namespace MedicalInformationSystem.Controllers
         }
 
         // DELETE: api/Tests/5
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Route("api/Tests/DeleteTest/{id}")]
         public async Task<IActionResult> DeleteTest(int id)
         {
             var test = await _context.Tests.FindAsync(id);
