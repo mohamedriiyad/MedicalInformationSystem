@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MedicalInformationSystem.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MedicalInformationSystem.Models;
@@ -171,37 +172,22 @@ namespace MedicalInformationSystem.Controllers
         // POST: api/MedicalHistories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Route("api/MedicalHistories/PostMedicalHistory")]
-        public async Task<ActionResult<MedicalHistory>> PostMedicalHistory(MedicalHistoryViewModel medicalHistoryModel)
+        [Route("api/MedicalHistories/PostMedicalHistory/{id}")]
+        public async Task<ActionResult<MedicalHistory>> PostMedicalHistory(string id, MedicalHistoryInput input)
         {
+            var patient = _context.Patients.Find(id);
+
+            if (patient == null)
+                return BadRequest("This id has no user!!");
+
             var medicalHistory = new MedicalHistory
             {
-                BloodType = medicalHistoryModel.BloodType,
-                ApplicationUserId = medicalHistoryModel.ApplicationUserId
+                BloodType = input.BloodType,
+                ApplicationUserId = id
             };
             _context.MedicalHistory.Add(medicalHistory);
             await _context.SaveChangesAsync();
 
-            foreach (var operation in medicalHistoryModel.Operations)
-            {
-                operation.MedicalHistoryId = medicalHistory.Id;
-            }
-
-            foreach (var disease in medicalHistoryModel.Diseases)
-            {
-                disease.MedicalHistoryId = medicalHistory.Id;
-            }
-
-            foreach (var sensitivity in medicalHistoryModel.Sensitivities)
-            {
-                sensitivity.MedicalHistoryId = medicalHistory.Id;
-            }
-            
-            _context.Operations.AddRange(medicalHistoryModel.Operations);
-            _context.Sensitivities.AddRange(medicalHistoryModel.Sensitivities);
-            _context.Diseases.AddRange(medicalHistoryModel.Diseases);
-
-            await _context.SaveChangesAsync();
             return Ok();
         }
 

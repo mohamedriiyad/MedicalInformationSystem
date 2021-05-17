@@ -20,7 +20,7 @@ namespace MedicalInformationSystem.Controllers
         }
 
         // GET: api/Operations
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<Operation>>> GetOperations(string id)
         {
             var medicalHistory = _context.MedicalHistory.FirstOrDefault(m => m.ApplicationUserId == id);
@@ -79,13 +79,13 @@ namespace MedicalInformationSystem.Controllers
 
         // POST: api/Operations
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<ActionResult<Operation>> PostOperation(string id, Operation operation)
         {
             var medicalHistory = _context.MedicalHistory.FirstOrDefault(m => m.ApplicationUserId == id);
             if (medicalHistory == null)
             {
-                return BadRequest("There is no diseases for this Patient");
+                return BadRequest("There is no medical history for this Patient");
             }
 
             operation.MedicalHistoryId = medicalHistory.Id;

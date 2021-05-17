@@ -23,7 +23,7 @@ namespace MedicalInformationSystem.Controllers
         }
 
         // GET: api/Tests
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<Test>>> GetTests(string id)
         {
             var medicalHistory = _context.MedicalHistory.FirstOrDefault(m => m.ApplicationUserId == id);
@@ -107,7 +107,7 @@ namespace MedicalInformationSystem.Controllers
             var medicalHistory = _context.MedicalHistory.FirstOrDefault(m => m.ApplicationUserId == id);
             if (medicalHistory == null)
             {
-                return BadRequest("There is no Tests for this Patient");
+                return BadRequest("There is no medical history for this Patient");
             }
 
             var test = new Test

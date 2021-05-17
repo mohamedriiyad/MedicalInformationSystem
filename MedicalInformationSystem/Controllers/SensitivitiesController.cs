@@ -20,7 +20,7 @@ namespace MedicalInformationSystem.Controllers
         }
 
         // GET: api/Sensitivities
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<Sensitivity>>> GetSensitivities(string id)
         {
             var medicalHistory = _context.MedicalHistory.FirstOrDefault(m => m.ApplicationUserId == id);
@@ -79,13 +79,13 @@ namespace MedicalInformationSystem.Controllers
 
         // POST: api/Sensitivities
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<ActionResult<Sensitivity>> PostSensitivity(string id, Sensitivity sensitivity)
         {
             var medicalHistory = _context.MedicalHistory.FirstOrDefault(m => m.ApplicationUserId == id);
             if (medicalHistory == null)
             {
-                return BadRequest("There is no diseases for this Patient");
+                return BadRequest("There is no medical history for this Patient");
             }
 
             sensitivity.MedicalHistoryId = medicalHistory.Id;
