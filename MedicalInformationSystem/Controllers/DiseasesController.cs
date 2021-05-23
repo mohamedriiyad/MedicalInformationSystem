@@ -23,7 +23,7 @@ namespace MedicalInformationSystem.Controllers
         [Route("api/Diseases/GetDiseases/{id}")]
         public async Task<ActionResult<IEnumerable<Disease>>> GetDiseases(string id)
         {
-            var medicalHistory = _context.MedicalHistory.FirstOrDefault(m => m.ApplicationUserId == id);
+            var medicalHistory = _context.MedicalHistories.FirstOrDefault(m => m.ApplicationUserId == id);
             if (medicalHistory == null)
             {
                 return BadRequest("There is no diseases for this Patient");
@@ -85,7 +85,7 @@ namespace MedicalInformationSystem.Controllers
         [Route("api/Diseases/PostDisease/{id}")]
         public async Task<ActionResult<Disease>> PostDisease(string id, Disease disease)
         {
-            var medicalHistory = _context.MedicalHistory.FirstOrDefault(m => m.ApplicationUserId == id);
+            var medicalHistory = _context.MedicalHistories.FirstOrDefault(m => m.ApplicationUserId == id);
             if (medicalHistory == null)
             {
                 return BadRequest("There is no medical history for this Patient");

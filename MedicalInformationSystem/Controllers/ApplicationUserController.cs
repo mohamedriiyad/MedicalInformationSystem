@@ -9,6 +9,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using MedicalInformationSystem.Persistant;
 
 namespace MedicalInformationSystem.Controllers
 {
@@ -16,25 +17,23 @@ namespace MedicalInformationSystem.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        public ApplicationUserController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        private readonly MedicalSystemDbContext _context;
+        public ApplicationUserController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, MedicalSystemDbContext context)
         {
             this._userManager = userManager;
             this._roleManager = roleManager;
-            
+            _context = context;
         }
 
 
 
         [HttpPost]
         [Route("api/ApplicationUser/postUser")]
-
         public async Task<IActionResult> postUser([FromBody] ApplicationUserModel model) // from from in frontend //
         {
 
             if (ModelState.IsValid)
             {
-
-
                 bool x = await this._roleManager.RoleExistsAsync("Patient");
                 if (!x)
                 {
@@ -102,26 +101,15 @@ namespace MedicalInformationSystem.Controllers
         }
 
 
-
-
-
-
-
-
-
-
         [HttpPost]
         [Route("api/ApplicationUser/Login")]
-
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-
-
             var user = _userManager.Users.FirstOrDefault(e => e.PatientSSN == model.PatientSSN);
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password)) // valid user //
             {
                 var role = await _userManager.GetRolesAsync(user);
-
+                
                 IdentityOptions _options = new IdentityOptions();
 
                 var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"));
@@ -139,42 +127,21 @@ namespace MedicalInformationSystem.Controllers
                ); 
 
                 var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
+                
+                // Store token
+                _context.Tokens.Add(new UserToken
+                {
+                    ApplicationUserId = user.Id,
+                    CreationDate = DateTime.Now,
+                    Token = tokenString
+                });
+                _context.SaveChanges();
+
                 return Ok(new { Token = tokenString, UserId = user.Id });
-
-
             }
 
-
-            else
-            {
-
-                return BadRequest(new { message = "patientSSN or password is incorrect." });
-            }
-
-
-
-
+            return BadRequest(new { message = "patientSSN or password is incorrect." });
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     }
 }

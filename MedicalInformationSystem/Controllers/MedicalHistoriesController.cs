@@ -24,7 +24,7 @@ namespace MedicalInformationSystem.Controllers
         [Route("api/MedicalHistories/GetMedicalHistory")]
         public async Task<IEnumerable<MedicalHistoryViewModel>> GetMedicalHistory()
         {
-            var medicalHistories = await _context.MedicalHistory
+            var medicalHistories = await _context.MedicalHistories
                 .Include(m => m.ApplicationUser)
                 .Include(m => m.Operations)
                 .Include(m => m.Diseases)
@@ -61,7 +61,7 @@ namespace MedicalInformationSystem.Controllers
                 return NotFound("This user doesn't have any medical history yet.");
             }
 
-            var medicalHistoryInDb = await _context.MedicalHistory
+            var medicalHistoryInDb = await _context.MedicalHistories
                 .Include(m => m.ApplicationUser)
                 .Include(m => m.Operations)
                 .Include(m => m.Diseases)
@@ -189,7 +189,7 @@ namespace MedicalInformationSystem.Controllers
                 BloodType = input.BloodType,
                 ApplicationUserId = id
             };
-            _context.MedicalHistory.Add(medicalHistory);
+            _context.MedicalHistories.Add(medicalHistory);
             await _context.SaveChangesAsync();
 
             return Ok();
@@ -200,13 +200,13 @@ namespace MedicalInformationSystem.Controllers
         [Route("api/MedicalHistories/DeleteMedicalHistory/{id}")]
         public async Task<IActionResult> DeleteMedicalHistory(string id)
         {
-            var medicalHistory = await _context.MedicalHistory.FirstOrDefaultAsync(m=>m.ApplicationUserId == id);
+            var medicalHistory = await _context.MedicalHistories.FirstOrDefaultAsync(m=>m.ApplicationUserId == id);
             if (medicalHistory == null)
             {
                 return NotFound();
             }
 
-            _context.MedicalHistory.Remove(medicalHistory);
+            _context.MedicalHistories.Remove(medicalHistory);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -214,7 +214,7 @@ namespace MedicalInformationSystem.Controllers
 
         private bool MedicalHistoryUserExists(string id)
         {
-            return _context.MedicalHistory.Any(e => e.ApplicationUserId == id);
+            return _context.MedicalHistories.Any(e => e.ApplicationUserId == id);
         }
     }
 }

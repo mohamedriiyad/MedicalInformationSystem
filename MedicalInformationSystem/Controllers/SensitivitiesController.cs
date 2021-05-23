@@ -23,7 +23,7 @@ namespace MedicalInformationSystem.Controllers
         [Route("api/Sensitivities/GetSensitivities/{id}")]
         public async Task<ActionResult<IEnumerable<Sensitivity>>> GetSensitivities(string id)
         {
-            var medicalHistory = _context.MedicalHistory.FirstOrDefault(m => m.ApplicationUserId == id);
+            var medicalHistory = _context.MedicalHistories.FirstOrDefault(m => m.ApplicationUserId == id);
             if (medicalHistory == null)
             {
                 return BadRequest("There is no operations for this Patient");
@@ -85,7 +85,7 @@ namespace MedicalInformationSystem.Controllers
         [Route("api/Sensitivities/PostSensitivity/{id}")]
         public async Task<ActionResult<Sensitivity>> PostSensitivity(string id, Sensitivity sensitivity)
         {
-            var medicalHistory = _context.MedicalHistory.FirstOrDefault(m => m.ApplicationUserId == id);
+            var medicalHistory = _context.MedicalHistories.FirstOrDefault(m => m.ApplicationUserId == id);
             if (medicalHistory == null)
             {
                 return BadRequest("There is no medical history for this Patient");

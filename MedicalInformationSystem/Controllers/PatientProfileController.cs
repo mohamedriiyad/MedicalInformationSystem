@@ -29,7 +29,7 @@ namespace MedicalInformationSystem.Controllers
 
        public async Task<Object> GetUserProfile()
        {
-           string userId = User.Claims.First(c => c.Type == "UserID").Value;
+           string userId = User.Claims.First(c => c.BloodType == "UserID").Value;
            var user = await usermanager.FindByIdAsync(userId);
            return new
            {

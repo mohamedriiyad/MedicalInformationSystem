@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MedicalInformationSystem.Migrations
 {
     [DbContext(typeof(MedicalSystemDbContext))]
-    [Migration("20210505093931_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20210518084529_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -143,7 +143,7 @@ namespace MedicalInformationSystem.Migrations
                         .IsUnique()
                         .HasFilter("[ApplicationUserId] IS NOT NULL");
 
-                    b.ToTable("MedicalHistory");
+                    b.ToTable("MedicalHistories");
                 });
 
             modelBuilder.Entity("MedicalInformationSystem.Models.Medicine", b =>
@@ -245,6 +245,29 @@ namespace MedicalInformationSystem.Migrations
                     b.HasIndex("MedicalHistoryId");
 
                     b.ToTable("Tests");
+                });
+
+            modelBuilder.Entity("MedicalInformationSystem.Models.UserToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("Tokens");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -568,6 +591,13 @@ namespace MedicalInformationSystem.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MedicalInformationSystem.Models.UserToken", b =>
+                {
+                    b.HasOne("MedicalInformationSystem.Models.ApplicationUser", null)
+                        .WithMany("Tokens")
+                        .HasForeignKey("ApplicationUserId");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -647,6 +677,8 @@ namespace MedicalInformationSystem.Migrations
                     b.Navigation("Hospital");
 
                     b.Navigation("MedicalHistory");
+
+                    b.Navigation("Tokens");
                 });
 #pragma warning restore 612, 618
         }

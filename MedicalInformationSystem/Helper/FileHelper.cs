@@ -13,8 +13,7 @@ namespace MedicalInformationSystem.Helper
             var files = new List<string>();
             foreach (var file in formFiles)
             {
-                var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.ToString()
-                    .Trim('"');
+                var fileName = file.FileName;
                 var fileExtension = Path.GetExtension(fileName);
                 var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
 

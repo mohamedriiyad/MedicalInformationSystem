@@ -14,7 +14,7 @@ namespace MedicalInformationSystem.Persistant
         }
 
         public DbSet<ApplicationUser> Patients { get; set; }
-        public DbSet<MedicalHistory> MedicalHistory { get; set; }
+        public DbSet<MedicalHistory> MedicalHistories { get; set; }
         public DbSet<Operation> Operations  { get; set; }
         public DbSet<Disease> Diseases { get; set; }
         public DbSet<Sensitivity> Sensitivities { get; set; }
@@ -23,6 +23,7 @@ namespace MedicalInformationSystem.Persistant
         public DbSet<HospitalConfirmation> HospitalConfirmations { get; set; }
         public DbSet<Medicine> Medicines { get; set; }
         public DbSet<Test> Tests { get; set; }
+        public DbSet<UserToken> Tokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

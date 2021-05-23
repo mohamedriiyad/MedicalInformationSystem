@@ -26,7 +26,7 @@ namespace MedicalInformationSystem.Controllers
         [Route("api/Tests/GetTests/{id}")]
         public async Task<ActionResult<IEnumerable<Test>>> GetTests(string id)
         {
-            var medicalHistory = _context.MedicalHistory.FirstOrDefault(m => m.ApplicationUserId == id);
+            var medicalHistory = _context.MedicalHistories.FirstOrDefault(m => m.ApplicationUserId == id);
             if (medicalHistory == null)
             {
                 return BadRequest("There is no medicines for this Patient");
@@ -107,7 +107,7 @@ namespace MedicalInformationSystem.Controllers
             {
                 return StatusCode(500, $"Internal server error: {ex}");
             }
-            var medicalHistory = _context.MedicalHistory.FirstOrDefault(m => m.ApplicationUserId == id);
+            var medicalHistory = _context.MedicalHistories.FirstOrDefault(m => m.ApplicationUserId == id);
             if (medicalHistory == null)
             {
                 return BadRequest("There is no medical history for this Patient");

@@ -11,14 +11,13 @@ namespace MedicalInformationSystem.Models
     {
 
         [Required]
-
         public string PatientSSN { get; set; }
+
         [Required]
         [StringLength(100, MinimumLength = 3,
         ErrorMessage = "Full Name should be minimum 3 characters and a maximum of 100 characters")]
         [DataType(DataType.Text)]
         public string FullName { get; set; }
-
 
         [Required]
         public string City { get; set; }
@@ -33,18 +32,21 @@ namespace MedicalInformationSystem.Models
 
         [Required]
         public string RelativeOneName { get; set; }
+
         [Required]
         public string RelativeOnePhoneNumber { get; set; }
+        
         [Required]
         public string RelativeTwoName { get; set; }
+        
         [Required]
         public string RelativeTwoPhoneNumber { get; set; }
 
         public HospitalModel Hospital { get; set; }
 
         public virtual MedicalHistory MedicalHistory { get; set; }
-        
 
+        public ICollection<UserToken> Tokens { get; set; }
 
 
         public ApplicationUser()
