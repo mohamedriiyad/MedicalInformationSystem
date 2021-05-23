@@ -1,45 +1,49 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using MedicalInformationSystem.Dtos;
 using MedicalInformationSystem.Models.Notifications;
 using MedicalInformationSystem.Persistant;
-using Microsoft.Extensions.Hosting.Internal;
-using FirebaseAdmin;
-using Google.Apis.Auth.OAuth2;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace MedicalInformationSystem.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
     public class NotificationsController : ControllerBase
     {
-        private static readonly Uri FireBasePushNotificationsURL = new Uri("https://fcm.googleapis.com/fcm/send");
+        private readonly MedicalSystemDbContext _context;
+        private static readonly Uri FireBasePushNotificationsUrl = new Uri("https://fcm.googleapis.com/fcm/send");
         private static readonly string ServerKey = "AAAAlB9nlnY:APA91bFiuguj921fcJvC05YnOSJpHQgN45EhueMeGYdZtkfYr-kPQBs0QEvLYjaBNzXBoKmoXKZ4YfkE3waIuO5fkuaeYvD3xHubL67GzOHqlIsGxkizQo2XDv0bM5HT6x6yaeYRn_aw";
+
+        public NotificationsController(MedicalSystemDbContext context)
+        {
+            _context = context;
+        }
 
 
         // POST api/<NotificationsController>
         [HttpPost]
+        [Route("api/Notifications/Post")]
         public async Task<IActionResult> Post([FromBody] NotificationInput input)
         {
-            bool sent = false;
-            var user = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            
-            if (input.DeviceTokens.Any())
+            var sent = false;
+            var deviceTokens = _context.Tokens
+                .Include(t => t.ApplicationUser)
+                .ThenInclude(u => u.MedicalHistory)
+                .Where(t => t.ApplicationUser.City == input.City &&
+                            t.ApplicationUser.MedicalHistory.BloodType == input.BloodType)
+                .Select(t=>t.Token)
+                .ToArray();
+
+            if (deviceTokens.Any())
             {
                 //Object creation
-
                 var messageInformation = new Message()
                 {
                     notification = new Notification()
@@ -47,8 +51,7 @@ namespace MedicalInformationSystem.Controllers
                         title = input.Title,
                         text = input.Body
                     },
-                    data = input.Data,
-                    registration_ids = input.DeviceTokens
+                    registration_ids = deviceTokens
                 };
 
                 //Object to JSON STRUCTURE => using Newtonsoft.Json;
@@ -71,7 +74,7 @@ namespace MedicalInformationSystem.Controllers
                  */
 
                 //Create request to Firebase API
-                var request = new HttpRequestMessage(HttpMethod.Post, FireBasePushNotificationsURL);
+                var request = new HttpRequestMessage(HttpMethod.Post, FireBasePushNotificationsUrl);
 
                 request.Headers.TryAddWithoutValidation("Authorization", "key=" + ServerKey);
                 request.Content = new StringContent(jsonMessage, Encoding.UTF8, "application/json");
@@ -80,11 +83,14 @@ namespace MedicalInformationSystem.Controllers
                 using (var client = new HttpClient())
                 {
                     result = await client.SendAsync(request);
-                    sent = sent && result.IsSuccessStatusCode;
+                    sent = result.IsSuccessStatusCode;
                 }
             }
 
-            return Ok();
+            if (sent)
+                return Ok();
+
+            return BadRequest("there is something wrong!!");
         }
     }
 }

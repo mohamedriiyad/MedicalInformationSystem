@@ -54,7 +54,7 @@ namespace MedicalInformationSystem.Controllers
                 }
 
                 bool z = await this._roleManager.RoleExistsAsync("hospital");
-                if (!y)
+                if (!z)
                 {
                     var role = new IdentityRole();
                     role.Name = "hospital";
@@ -127,20 +127,28 @@ namespace MedicalInformationSystem.Controllers
                ); 
 
                 var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
+
+                if (TokenExists(model.DeviceToken, user.Id)) 
+                    return Ok(new {Token = tokenString, UserId = user.Id});
                 
                 // Store token
                 _context.Tokens.Add(new UserToken
                 {
                     ApplicationUserId = user.Id,
                     CreationDate = DateTime.Now,
-                    Token = tokenString
+                    Token = model.DeviceToken
                 });
-                _context.SaveChanges();
 
+                _context.SaveChanges();
                 return Ok(new { Token = tokenString, UserId = user.Id });
             }
 
             return BadRequest(new { message = "patientSSN or password is incorrect." });
+        }
+
+        private bool TokenExists(string token, string id)
+        {
+            return _context.Tokens.Any(t => t.Token == token && t.ApplicationUserId == id); 
         }
 
     }

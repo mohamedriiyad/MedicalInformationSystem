@@ -14,7 +14,7 @@ namespace MedicalInformationSystem.Models
 
         [Required]
         public string Password { get; set; }
-
+        public string DeviceToken { get; set; }
 
     }
 }

@@ -2,9 +2,9 @@
 {
     public class NotificationInput
     {
-        public string[] DeviceTokens { get; set; }
         public string Title { get; set; }
         public string Body { get; set; }
-        public object Data { get; set; }
+        public string BloodType { get; set; }
+        public string City { get; set; }
     }
 }
