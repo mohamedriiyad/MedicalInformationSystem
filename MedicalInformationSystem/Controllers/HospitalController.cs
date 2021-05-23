@@ -127,6 +127,7 @@ namespace MedicalInformationSystem.Controllers
 
 
             var user = _userManager.Users.FirstOrDefault(e => e.Email == model.Email);
+            var hospital = this._context.Hospitals.FirstOrDefault(e => e.Email == model.Email);
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password)) // valid user //
             {
                 var role = await _userManager.GetRolesAsync(user);
@@ -153,7 +154,7 @@ namespace MedicalInformationSystem.Controllers
                );
 
                 var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
-                return Ok(new { Token = tokenString, UserId = user.Id });
+                return Ok(new { Token = tokenString, Id = hospital.Id});
 
 
             }
@@ -162,41 +163,38 @@ namespace MedicalInformationSystem.Controllers
         }
 
 
-        //[HttpPost, DisableRequestSizeLimit]
-        //[Route("api/ApplicationUser/UploadFiles")]
-        //public IActionResult UploadFiles()
-        //{
-        //    try
-        //    {
-        //        var files = Request.Form.Files.ToList();
-        //        var folderName = Path.Combine("Resources", "Files");
-        //        var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+     
 
-        //        if (files.Any(f => f.Length == 0))
-        //            return BadRequest("There is no files or empty files");
-
-        //        FileHelper.UploadAll(files,pathToSave);
-        //        return Ok("All files are UPLOADED SUCCESSFULLY!");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, $"Internal server error: {ex}");
-        //    }
-        //}
+        [HttpGet]
+        [Route("api/Hospital/getHospitalById/{id}")]
+        public async Task<IActionResult> getHospital(int id)
+        {
 
 
+            var hospital = await this._context.Hospitals.FindAsync(id);
+            if (hospital == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(
+
+                new
+                {
+                    Id = hospital.Id,
+                    Name = hospital.Name,
+                    Location  = hospital.Location,
+                    Email  = hospital.Email
 
 
-        /*
-          [Route("api/ApplicationUser/gethospitaldata/{id}")]
-          public async Task<IActionResult> gethospitaldata(int id)
-          {
-              var hospital = await this.context.Hospitals.FindAsync(id);
-              return Ok(hospital);
+                }
+
+                ); ;
 
 
-          }
-        */
+
+            
+        }
 
 
 
