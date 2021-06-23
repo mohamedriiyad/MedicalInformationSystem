@@ -34,7 +34,7 @@ namespace MedicalInformationSystem
 
 
             services.AddDbContext<MedicalSystemDbContext>(
-             options => options.UseSqlServer(Configuration.GetConnectionString("MedicalSystemAPIProduction")));
+             options => options.UseSqlServer(Configuration.GetConnectionString("MedicalSystemAPI")));
 
             services.AddIdentityCore<ApplicationUser>()
                .AddRoles<IdentityRole>()
