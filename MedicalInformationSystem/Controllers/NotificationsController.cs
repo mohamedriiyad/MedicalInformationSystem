@@ -106,7 +106,7 @@ namespace MedicalInformationSystem.Controllers
                 bloodDonations.AddRange(usersId.Select(userId => new NotificationModel
                 {
                     ApplicationUserId = userId,
-                    Date = DateTime.Now.ToUniversalTime(),
+                    Date = DateTime.Now,
                     HospitalModelId = hospital.Id,
                     Note = input.Body,
                     PatientName = input.PatientName,

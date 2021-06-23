@@ -3,9 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace MedicalInformationSystem.Controllers
@@ -13,45 +10,18 @@ namespace MedicalInformationSystem.Controllers
     public class PatientProfileController:Controller
     {
 
-        private readonly UserManager<ApplicationUser> usermanager;
-        public PatientProfileController(UserManager<ApplicationUser> usermanager)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public PatientProfileController(UserManager<ApplicationUser> userManager)
         {
-
-            this.usermanager = usermanager;
+            _userManager = userManager;
         }
 
-
-        /*
-
-       [HttpGet]
-       [Authorize]
-       //GET : /api/UserProfile
-
-       public async Task<Object> GetUserProfile()
-       {
-           string userId = User.Claims.First(c => c.BloodType == "UserID").Value;
-           var user = await usermanager.FindByIdAsync(userId);
-           return new
-           {
-               user.FullName,
-               user.Email,
-               user.UserName,
-               user.City,
-               user.Gender
-           };
-       }
-       */
-
         [HttpGet]
-       
         [Route("api/PatientProfile/GetForAdmin")]
         public string GetForAdmin()
         {
             return "Web method for Admin";
         }
-
-
-
 
         [HttpGet]
         [Authorize(Roles = "Patient")]
@@ -61,8 +31,6 @@ namespace MedicalInformationSystem.Controllers
             return "Web method for patient";
         }
 
-
-
         [HttpGet]
         [Authorize(Roles = "hospital")]
         [Route("api/PatientProfile/GetForHospital")]
@@ -71,31 +39,23 @@ namespace MedicalInformationSystem.Controllers
             return "Web method for hospital";
         }
 
-
-
-
-
-
-
-
-
         [HttpGet]
         [Route("api/PatientProfile/getPatientById/{PatientId}")]
         [Authorize]
-        public async Task<IActionResult> getPatientById(string PatientId)
+        public async Task<IActionResult> GetPatientById(string patientId)
         {
-            var user = await this.usermanager.FindByIdAsync(PatientId);
+            var user = await _userManager.FindByIdAsync(patientId);
             if (user == null)
             {
                 return BadRequest("sorry user not found");
             }
             return Ok(new
             {
-                FullName = user.FullName,
-                PhoneNumber = user.PhoneNumber,
-                Gender = user.Gender,
-                City = user.City,
-                DateOfBirth = user.DateOfBirth,
+                user.FullName,
+                user.PhoneNumber,
+                user.Gender,
+                user.City,
+                user.DateOfBirth,
                 RealtiveOneName = user.RelativeOneName,
                 RealtiveTwoName = user.RelativeTwoName,
                 RealtiveOnePhone = user.RelativeOnePhoneNumber,
@@ -106,44 +66,36 @@ namespace MedicalInformationSystem.Controllers
 
         [HttpGet]
         [Route("api/PatientProfile/getPatientBySSN/{PatientSSN}")]
-       // [Authorize]
-
-        public async Task<IActionResult> getPatientBySSN(string PatientSSN)
+        public async Task<IActionResult> GetPatientBySsn(string patientSsn)
         {
-            var user = await this.usermanager.Users.FirstAsync(e => e.PatientSSN == PatientSSN);
+            var user = await _userManager.Users.FirstAsync(e => e.PatientSSN == patientSsn);
             if (user == null)
             {
                 return BadRequest("sorry user not found");
             }
             return Ok(new
             {
-                Id =  user.Id,
-                FullName = user.FullName,
-                PhoneNumber = user.PhoneNumber,
-                DateOfBirth = user.DateOfBirth,
+                user.Id,
+                user.FullName,
+                user.PhoneNumber,
+                user.DateOfBirth,
                 RealtiveOneName = user.RelativeOneName,
                 RealtiveTwoName = user.RelativeTwoName,
                 RealtiveOnePhone = user.RelativeOnePhoneNumber,
                 RealtiveTwoPhone = user.RelativeTwoPhoneNumber,
-                Gender = user.Gender,
-                City = user.City,
-
+                user.Gender,
+                user.City,
             });
         }
 
-
-
         [HttpPut]
         [Route("api/PatientProfile/UpdatePatient/{PatientId}")]
-        public async Task<IActionResult> UpdatePatient(string PatientId, [FromBody] UpdatePatientModel model)
+        public async Task<IActionResult> UpdatePatient(string patientId, [FromBody] UpdatePatientModel model)
         {
-            var user = await this.usermanager.FindByIdAsync(PatientId);
+            var user = await _userManager.FindByIdAsync(patientId);
 
             if (user == null)
-            {
                 return BadRequest();
-            }
-
 
             user.City = model.City;
             user.RelativeOneName = model.RelativeOneName;
@@ -152,25 +104,8 @@ namespace MedicalInformationSystem.Controllers
             user.RelativeTwoPhoneNumber = model.RelativeTwoPhoneNumber;
             user.PhoneNumber = model.PhoneNumber;
 
-
-            await this.usermanager.UpdateAsync(user);
+            await _userManager.UpdateAsync(user);
             return Ok();
-
-
-
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 }

@@ -20,8 +20,8 @@ namespace MedicalInformationSystem.Controllers
         private readonly MedicalSystemDbContext _context;
         public ApplicationUserController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, MedicalSystemDbContext context)
         {
-            this._userManager = userManager;
-            this._roleManager = roleManager;
+            _userManager = userManager;
+            _roleManager = roleManager;
             _context = context;
         }
 
@@ -29,74 +29,60 @@ namespace MedicalInformationSystem.Controllers
 
         [HttpPost]
         [Route("api/ApplicationUser/postUser")]
-        public async Task<IActionResult> postUser([FromBody] ApplicationUserModel model) // from from in frontend //
+        public async Task<IActionResult> PostUser([FromBody] ApplicationUserModel model) // from from in frontend //
         {
-
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return StatusCode(201);
+            var x = await _roleManager.RoleExistsAsync("Patient");
+            if (!x)
             {
-                bool x = await this._roleManager.RoleExistsAsync("Patient");
-                if (!x)
-                {
-                    var role = new IdentityRole();
-                    role.Name = "Patient";
-                    await _roleManager.CreateAsync(role);
-
-                }
-
-
-                bool y = await this._roleManager.RoleExistsAsync("Admin");
-                if (!y)
-                {
-                    var role = new IdentityRole();
-                    role.Name = "Admin";
-                    await _roleManager.CreateAsync(role);
-
-                }
-
-                bool z = await this._roleManager.RoleExistsAsync("hospital");
-                if (!z)
-                {
-                    var role = new IdentityRole();
-                    role.Name = "hospital";
-                    await _roleManager.CreateAsync(role);
-
-                }
-
-
-                model.Role = "Admin";
-
-                var User = new ApplicationUser()
-                {
-
-                    FullName = model.FullName,
-                    PatientSSN = model.PatientSSN,
-                    UserName = model.PatientSSN,
-                    DateOfBirth = model.DateOfBirth,
-                    PhoneNumber = model.PhoneNumber,
-                    Gender = model.Gender,
-                    RelativeOneName = model.RelativeOneName,
-                    RelativeOnePhoneNumber = model.RelativeOnePhoneNumber,
-                    RelativeTwoName = model.RelativeTwoName,
-                    RelativeTwoPhoneNumber = model.RelativeTwoPhoneNumber,
-                    City = model.City
-                };
-                var result = await this._userManager.CreateAsync(User, model.Password);
-
-                if (result.Succeeded)
-                {
-                    var addRole = await this._userManager.AddToRoleAsync(User, model.Role);
-                    return Ok(result);
-                }
-                else
-                {
-                    var errors = result.Errors.Select(e => e.Description);
-                    // var message = "Invalied social security Number";
-                    return BadRequest(errors);
-                }
+                var role = new IdentityRole {Name = "Patient"};
+                await _roleManager.CreateAsync(role);
             }
 
 
-            return StatusCode(201);
+            var y = await _roleManager.RoleExistsAsync("Admin");
+            if (!y)
+            {
+                var role = new IdentityRole {Name = "Admin"};
+                await _roleManager.CreateAsync(role);
+            }
+
+            var z = await _roleManager.RoleExistsAsync("hospital");
+            if (!z)
+            {
+                var role = new IdentityRole {Name = "hospital"};
+                await _roleManager.CreateAsync(role);
+            }
+
+
+            model.Role = "Admin";
+
+            var user = new ApplicationUser()
+            {
+                FullName = model.FullName,
+                PatientSSN = model.PatientSSN,
+                UserName = model.PatientSSN,
+                DateOfBirth = model.DateOfBirth,
+                PhoneNumber = model.PhoneNumber,
+                Gender = model.Gender,
+                RelativeOneName = model.RelativeOneName,
+                RelativeOnePhoneNumber = model.RelativeOnePhoneNumber,
+                RelativeTwoName = model.RelativeTwoName,
+                RelativeTwoPhoneNumber = model.RelativeTwoPhoneNumber,
+                City = model.City
+            };
+            var result = await _userManager.CreateAsync(user, model.Password);
+
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, model.Role);
+                return Ok(result);
+            }
+
+            var errors = result.Errors.Select(e => e.Description);
+            return BadRequest(errors);
+
 
         }
 
@@ -110,15 +96,15 @@ namespace MedicalInformationSystem.Controllers
             {
                 var role = await _userManager.GetRolesAsync(user);
                 
-                IdentityOptions _options = new IdentityOptions();
+                IdentityOptions options = new IdentityOptions();
 
                 var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"));
                 var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
                 var tokeOptions = new JwtSecurityToken(
                 issuer: "https://localhost:44309/",
                 audience: "https://localhost:44309/",
-                 claims: new List<Claim>() {
-                new Claim(_options.ClaimsIdentity.RoleClaimType , role.FirstOrDefault())
+                claims: new List<Claim>() {
+                new Claim(options.ClaimsIdentity.RoleClaimType , role.FirstOrDefault())
 
                  },
                 expires: DateTime.Now.AddDays(1),
@@ -132,12 +118,22 @@ namespace MedicalInformationSystem.Controllers
                     return Ok(new {Token = tokenString, UserId = user.Id});
                 
                 // Store token
-                _context.Tokens.Add(new UserToken
+                var token = _context.Tokens.SingleOrDefault(t => t.ApplicationUserId == user.Id);
+                if (token == null)
                 {
-                    ApplicationUserId = user.Id,
-                    CreationDate = DateTime.Now,
-                    Token = model.DeviceToken
-                });
+                    _context.Tokens.Add(new UserToken
+                    {
+                        ApplicationUserId = user.Id,
+                        CreationDate = DateTime.Now,
+                        Token = model.DeviceToken
+                    });
+                }
+                else
+                {
+                    token.Token = model.DeviceToken;
+                    token.CreationDate = DateTime.Now;
+                    _context.Tokens.Update(token);
+                }
 
                 _context.SaveChanges();
                 return Ok(new { Token = tokenString, UserId = user.Id });
