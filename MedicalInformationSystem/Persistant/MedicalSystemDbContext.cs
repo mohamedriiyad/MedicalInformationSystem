@@ -6,11 +6,9 @@ namespace MedicalInformationSystem.Persistant
 {
     public class MedicalSystemDbContext :IdentityDbContext
     {
-
-
-        public MedicalSystemDbContext(DbContextOptions<MedicalSystemDbContext> options) : base(options)
+        public MedicalSystemDbContext(DbContextOptions<MedicalSystemDbContext> options) 
+            : base(options)
         {
-
         }
 
         public DbSet<ApplicationUser> Patients { get; set; }
@@ -24,6 +22,7 @@ namespace MedicalInformationSystem.Persistant
         public DbSet<Medicine> Medicines { get; set; }
         public DbSet<Test> Tests { get; set; }
         public DbSet<UserToken> Tokens { get; set; }
+        public DbSet<NotificationModel> BloodDonations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
