@@ -33,7 +33,6 @@ namespace MedicalInformationSystem.Controllers
                 .Include(m => m.Tests)
                 .Select(a => new MedicalHistoryViewModel
                 {
-
                     Id = a.Id,
                     ApplicationUserId = a.ApplicationUser.Id,
                     PatientSSN = a.ApplicationUser.PatientSSN,
@@ -44,7 +43,6 @@ namespace MedicalInformationSystem.Controllers
                     FullName = a.ApplicationUser.FullName,
                     Tests = a.Tests,
                     Medicines = a.Medicines
-
                 })
                 .ToListAsync();
 
@@ -57,9 +55,7 @@ namespace MedicalInformationSystem.Controllers
         public async Task<ActionResult<MedicalHistoryViewModel>> GetMedicalHistory(string id)
         {
             if (!MedicalHistoryUserExists(id))
-            {
                 return NotFound("This user doesn't have any medical history yet.");
-            }
 
             var medicalHistoryInDb = await _context.MedicalHistories
                 .Include(m => m.ApplicationUser)
@@ -84,76 +80,26 @@ namespace MedicalInformationSystem.Controllers
                 ApplicationUserId = medicalHistoryInDb.ApplicationUserId
             };
 
-            
-
             return medicalHistory;
         }
 
-        // PUT: api/MedicalHistories/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
         [Route("api/MedicalHistories/PutMedicalHistory/{id}")]
-        public async Task<IActionResult> PutMedicalHistory(string id, MedicalHistoryViewModel medicalHistory)
+        public async Task<IActionResult> PutMedicalHistory(string id, MedicalHistoryInput medicalHistory)
         {
-            if (id != medicalHistory.ApplicationUserId)
-            {
-                return BadRequest();
-            }
+            var patient = _context.Patients.Find(id);
+
+            if (patient == null)
+                return BadRequest("This id has no user!!");
 
             if (!MedicalHistoryUserExists(id))
-            {
                 return NotFound("This user doesn't have any medical history yet.");
-            }
 
-            var medicalHistoryInDb = new MedicalHistory
-            {
-                Id = medicalHistory.Id,
-                BloodType = medicalHistory.BloodType,
-                ApplicationUserId = medicalHistory.ApplicationUserId
-            };
+            var medicalHistoryInDb =
+                await _context.MedicalHistories.FirstOrDefaultAsync(m => m.ApplicationUserId == id);
+            medicalHistoryInDb.BloodType = medicalHistory.BloodType;
+            _context.MedicalHistories.Update(medicalHistoryInDb);
 
-            _context.Entry(medicalHistoryInDb).State = EntityState.Modified;
-
-            if (medicalHistory.Operations != null)
-            {
-                var operations = new List<Operation>();
-                operations.AddRange(medicalHistory.Operations);
-                medicalHistoryInDb.Operations = operations;
-
-
-                foreach (var operation in medicalHistoryInDb.Operations)
-                {
-                    _context.Entry(operation).State = EntityState.Modified;
-                }
-            }
-
-            if (medicalHistory.Sensitivities != null)
-            {
-                var sensitivities = new List<Sensitivity>();
-                sensitivities.AddRange(medicalHistory.Sensitivities);
-                medicalHistoryInDb.Sensitivities = sensitivities;
-
-                foreach (var sensitivity in medicalHistoryInDb.Sensitivities)
-                {
-                    _context.Entry(sensitivity).State = EntityState.Modified;
-                }
-
-            }
-
-            if (medicalHistory.Diseases != null)
-            {
-                var diseases = new List<Disease>();
-                diseases.AddRange(medicalHistory.Diseases);
-                medicalHistoryInDb.Diseases = diseases;
-
-                foreach (var disease in medicalHistoryInDb.Diseases)
-                {
-                    _context.Entry(disease).State = EntityState.Modified;
-                }
-
-            }
-
-            
             try
             {
                 await _context.SaveChangesAsync();
@@ -161,13 +107,8 @@ namespace MedicalInformationSystem.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!MedicalHistoryUserExists(id))
-                {
                     return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest("There is something wrong!!");
             }
 
             return NoContent();
@@ -183,6 +124,8 @@ namespace MedicalInformationSystem.Controllers
 
             if (patient == null)
                 return BadRequest("This id has no user!!");
+            if (MedicalHistoryUserExists(id))
+                return BadRequest("This user already have a medical history!!");
 
             var medicalHistory = new MedicalHistory
             {

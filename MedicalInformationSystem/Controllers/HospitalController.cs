@@ -18,47 +18,17 @@ namespace MedicalInformationSystem.Controllers
 
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly MedicalSystemDbContext _context;
-        private readonly RoleManager<IdentityRole> _roleManager;
 
-
-        public HospitalController(UserManager<ApplicationUser> userManager, MedicalSystemDbContext context, RoleManager<IdentityRole> roleManager)
+        public HospitalController(UserManager<ApplicationUser> userManager, MedicalSystemDbContext context)
         {
             _userManager = userManager;
             _context = context;
-            _roleManager = roleManager;
-
         }
-
 
         [HttpPost]
         [Route("api/ApplicationUser/posthospital")]
-
         public async Task<IActionResult> PostUser([FromBody] HospitalSignUpModel model) // from from in frontend //
         {
-
-
-            var x = await _roleManager.RoleExistsAsync("Patient");
-            if (!x)
-            {
-                var role = new IdentityRole { Name = "Patient" };
-                await _roleManager.CreateAsync(role);
-            }
-
-
-            var y = await _roleManager.RoleExistsAsync("Admin");
-            if (!y)
-            {
-                var role = new IdentityRole { Name = "Admin" };
-                await _roleManager.CreateAsync(role);
-            }
-
-            var z = await _roleManager.RoleExistsAsync("hospital");
-            if (!z)
-            {
-                var role = new IdentityRole { Name = "hospital" };
-                await _roleManager.CreateAsync(role);
-            }
-
             if (!ModelState.IsValid) 
                 return StatusCode(201);
             

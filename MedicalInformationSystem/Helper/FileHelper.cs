@@ -13,22 +13,20 @@ namespace MedicalInformationSystem.Helper
             var files = new List<string>();
             foreach (var file in formFiles)
             {
-                var fileName = file.FileName;
-                var fileExtension = Path.GetExtension(fileName);
-                var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+                var fileExtension = Path.GetExtension(file.FileName);
+                var fileName = Path.Combine(Guid.NewGuid() + fileExtension);
+                var fileInDb = Path.Combine( pathToSave, fileName);
+                var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", pathToSave, fileName);
 
+                if (!Directory.Exists(Path.Combine("wwwroot", pathToSave)))
+                    Directory.CreateDirectory(Path.Combine("wwwroot", pathToSave));
 
-                var fullPath = Path.Combine(pathToSave, fileNameWithoutExtension+Guid.NewGuid().ToString()+fileExtension);
-
-                if (!Directory.Exists(pathToSave))
+                using (var stream = new FileStream(fullPath, FileMode.Create))
                 {
-                    Directory.CreateDirectory(pathToSave);
+                    file.CopyTo(stream);
                 }
 
-                using var stream = new FileStream(fullPath,FileMode.Create);
-                file.CopyTo(stream);
-
-                files.Add(fullPath);
+                files.Add(fileInDb);
             }
 
             return files;

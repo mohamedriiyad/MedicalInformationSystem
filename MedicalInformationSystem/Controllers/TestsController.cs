@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MedicalInformationSystem.Helper;
@@ -92,8 +91,7 @@ namespace MedicalInformationSystem.Controllers
             var formFiles = model.Files.ToList();
             //var hospitalFiles = new List<HospitalFile>();
             //var files = Request.Form.Files.ToList();
-            var folderName = Path.Combine("Resources", "Images");
-            var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+            var pathToSave = @"images/tests";
             List<string> files;
 
             try
@@ -109,9 +107,7 @@ namespace MedicalInformationSystem.Controllers
             }
             var medicalHistory = _context.MedicalHistories.FirstOrDefault(m => m.ApplicationUserId == id);
             if (medicalHistory == null)
-            {
                 return BadRequest("There is no medical history for this Patient");
-            }
 
             var test = new Test
             {

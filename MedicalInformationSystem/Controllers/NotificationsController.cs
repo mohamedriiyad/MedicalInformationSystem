@@ -57,12 +57,16 @@ namespace MedicalInformationSystem.Controllers
             if (deviceTokens.Any())
             {
                 //Object creation
-                var messageInformation = new Message()
+                var messageInformation = new Message
                 {
-                    notification = new Notification()
+                    notification = new Notification
                     {
                         title = input.Title,
                         text = input.Body
+                    },
+                    data = new Data
+                    {
+                        click_action = "FLUTTER_NOTIFICATION_CLICK"
                     },
                     registration_ids = deviceTokens
                 };

@@ -47,35 +47,6 @@ namespace MedicalInformationSystem.Controllers
             return hospitalConfirmation;
         }
 
-        // PUT: api/HospitalConfirmations/5
-        // To protect from over-posting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutHospitalConfirmation(int id, HospitalConfirmation hospitalConfirmation)
-        //{
-        //    if (id != hospitalConfirmation.Id)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    _context.Entry(hospitalConfirmation).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!HospitalConfirmationExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-
-        //        throw;
-        //    }
-
-        //    return NoContent();
-        //}
-
         // POST: api/HospitalConfirmations
         // To protect from over-posting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost,DisableRequestSizeLimit]
@@ -83,9 +54,7 @@ namespace MedicalInformationSystem.Controllers
         {
             var formFiles = model.Files.ToList();
             var hospitalFiles = new List<HospitalFile>();
-            //var files = Request.Form.Files.ToList();
-            var folderName = Path.Combine("Resources", "Files");
-            var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+            var pathToSave = @"files/hospital";
             List<string> files;
 
             try
@@ -117,10 +86,7 @@ namespace MedicalInformationSystem.Controllers
             _context.HospitalFiles.AddRange(hospitalFiles);
             _context.SaveChanges();
             
-
-
             return Ok("All files are UPLOADED SUCCESSFULLY!");
-
         }
 
         // DELETE: api/HospitalConfirmations/5

@@ -26,12 +26,9 @@ namespace MedicalInformationSystem
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers().AddNewtonsoftJson(options =>
              options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
               );
-
-
 
             services.AddDbContext<MedicalSystemDbContext>(
              options => options.UseSqlServer(Configuration.GetConnectionString("MedicalSystemAPI")));
@@ -40,8 +37,6 @@ namespace MedicalInformationSystem
                .AddRoles<IdentityRole>()
          .AddEntityFrameworkStores<MedicalSystemDbContext>();
 
-
-
             services.Configure<IdentityOptions>(options =>
             {
                 options.Password.RequireDigit = false;
@@ -49,8 +44,6 @@ namespace MedicalInformationSystem
                 options.Password.RequireLowercase = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
-
-
             });
 
             services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
@@ -99,7 +92,7 @@ namespace MedicalInformationSystem
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MedicalInformationSystem v1"));
 
             app.UseHttpsRedirection();
-
+            app.UseStaticFiles();
             app.UseRouting();
             app.UseCors("MyPolicy");
             app.UseAuthentication();

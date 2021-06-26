@@ -6,5 +6,6 @@ namespace MedicalInformationSystem.Models.Notifications
     {
         public string[] registration_ids { get; set; }
         public Notification notification { get; set; }
+        public Data data { get; set; }
     }
 }
